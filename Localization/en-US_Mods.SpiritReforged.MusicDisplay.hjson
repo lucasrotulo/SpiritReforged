@@ -12,3 +12,8 @@ Savanna: {
 	DisplayName: Savanna
 	Author: "{$BySalvati}, {$Sbubby}"
 }
+
+DeepOcean: {
+	DisplayName: Deep Ocean
+	Author: "{$BySalvati}"
+}

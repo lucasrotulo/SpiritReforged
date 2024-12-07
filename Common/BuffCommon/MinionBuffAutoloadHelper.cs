@@ -2,7 +2,7 @@ using System.Linq;
 using System.Reflection;
 using Terraria.DataStructures;
 
-namespace SpiritReforged.Common.Misc;
+namespace SpiritReforged.Common.BuffCommon;
 
 [AttributeUsage(AttributeTargets.Class)]
 public class AutoloadMinionBuff() : Attribute { }
@@ -38,7 +38,7 @@ public class AutoloadMinionPlayer : ModPlayer
 
 public class AutoloadMinionGlobalProjectile : GlobalProjectile
 {
-	public override bool PreAI(Projectile projectile) 
+	public override bool PreAI(Projectile projectile)
 	{
 		if (AutoloadMinionDictionary.BuffDictionary.ContainsKey(projectile.type))
 		{
@@ -62,9 +62,9 @@ public static class AutoloadMinionDictionary
 	public static void AddBuffs(Assembly code)
 	{
 		var autoloadminions = code.GetTypes().Where(x => x.IsSubclassOf(typeof(ModProjectile)) && Attribute.IsDefined(x, typeof(AutoloadMinionBuff))); //read the assembly to find classes that are mod projectiles, and have the autoload minion buff attribute
-		foreach(Type MinionType in autoloadminions)
+		foreach (Type MinionType in autoloadminions)
 		{
-			var attribute = (AutoloadMinionBuff)Attribute.GetCustomAttribute(MinionType, typeof(AutoloadMinionBuff)); 
+			var attribute = (AutoloadMinionBuff)Attribute.GetCustomAttribute(MinionType, typeof(AutoloadMinionBuff));
 			var mProjectile = (ModProjectile)Activator.CreateInstance(MinionType);
 
 			SpiritReforgedMod.Instance.AddContent(new AutoloadedMinionBuff(SpiritReforgedMod.Instance.Find<ModProjectile>(MinionType.Name).Type, MinionType.Name + "_Buff", MinionType.FullName.Replace(".", "/") + "_Buff"));

@@ -1,7 +1,38 @@
+using SpiritReforged.Common.BuffCommon;
+
 namespace SpiritReforged.Content.Savanna.Items.Gar;
 
 public class QuenchPotion : ModItem
 {
+	public override void Load()
+	{
+		On_Player.QuickBuff += FocusQuenchPotion;
+		BuffHooks.ModifyBuffTime += QuenchifyBuff;
+	}
+
+	private void FocusQuenchPotion(On_Player.orig_QuickBuff orig, Player self)
+	{
+		if (!self.cursed && !self.CCed && !self.dead && !self.HasBuff<QuenchPotion_Buff>() && self.CountBuffs() < Player.MaxBuffs)
+		{
+			int itemIndex = self.FindItemInInventoryOrOpenVoidBag(Type, out bool inVoidBag);
+			var item = inVoidBag ? self.bank4.item[itemIndex] : self.inventory[itemIndex];
+
+			ItemLoader.UseItem(item, self);
+			self.AddBuff(item.buffType, item.buffTime);
+
+			if (item.consumable && ItemLoader.ConsumeItem(item, self) && --item.stack <= 0)
+				item.TurnToAir();
+		}
+
+		orig(self);
+	}
+
+	private void QuenchifyBuff(int buffType, ref int buffTime, Player player, bool quickBuff)
+	{
+		if (!Main.debuff[buffType] && buffType != ModContent.BuffType<QuenchPotion_Buff>() && player.HasBuff<QuenchPotion_Buff>())
+			buffTime = (int)(buffTime * 1.25f);
+	}
+
 	public override void SetDefaults()
 	{
 		Item.width = 20;
@@ -18,31 +49,13 @@ public class QuenchPotion : ModItem
 		Item.UseSound = SoundID.Item3;
 	}
 
-	public override void AddRecipes()
-	{
-		Recipe recipe = CreateRecipe();
-		recipe.AddIngredient(Mod.Find<ModItem>("GarItem").Type, 1);
-		recipe.AddIngredient(ItemID.Blinkroot, 1);
-		recipe.AddIngredient(ItemID.Moonglow, 1);
-		recipe.AddIngredient(ItemID.Waterleaf, 1);
-		recipe.AddIngredient(ItemID.BottledWater, 1);
-		recipe.AddTile(TileID.Bottles);
-		recipe.Register();
-	}
+	public override void AddRecipes() => CreateRecipe()
+			.AddIngredient(Mod.Find<ModItem>("GarItem").Type, 1)
+			.AddIngredient(ItemID.Blinkroot, 1).AddIngredient(ItemID.Moonglow, 1)
+			.AddIngredient(ItemID.Waterleaf, 1)
+			.AddIngredient(ItemID.BottledWater, 1)
+			.AddTile(TileID.Bottles)
+			.Register();
 }
-public class QuenchPotion_Buff : ModBuff
-{
-	public override void Update(Player player, ref int buffIndex)
-	{
-		player.GetModPlayer<SavannaPlayer>().quenchPotion = true;
 
-		for (int i = 0; i < player.buffType.Length; i++)
-		{
-			if (player.buffType[i] > 0 && player.buffType[i] != ModContent.BuffType<QuenchPotion_Buff>())
-			{
-				player.buffTime[i] = (int)(player.buffTime[i] * 1.25f);
-				break;
-			}
-		}
-	}
-}
+public class QuenchPotion_Buff : ModBuff { }

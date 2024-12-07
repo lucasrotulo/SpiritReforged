@@ -15,8 +15,6 @@ public abstract class CustomTree : ModTile
 	protected readonly HashSet<Point16> treeDrawPoints = [];
 	private readonly HashSet<Point16> treeShakes = [];
 
-	/// <summary> Calculates the horizontal offset of a palm tree using the vanilla method. </summary>
-	public static Vector2 GetPalmTreeOffset(int i, int j) => new(Framing.GetTileSafely(i, j).TileFrameY - 2, 0);
 	public bool IsTreeTop(int i, int j, bool checkBroken = false)
 	{
 		bool clear = Framing.GetTileSafely(i, j - 1).TileType != Type;
@@ -130,7 +128,7 @@ public abstract class CustomTree : ModTile
 	/// <summary> Use this to draw treetops and tree branches. The coordinates correspond to special points added in <see cref="AddDrawPoints"/>. </summary>
 	public virtual void DrawTreeFoliage(int i, int j, SpriteBatch spriteBatch)
 	{
-		var position = new Vector2(i, j) * 16 - Main.screenPosition + new Vector2(10, 0) + GetPalmTreeOffset(i, j);
+		var position = new Vector2(i, j) * 16 - Main.screenPosition + new Vector2(10, 0) + TreeHelper.GetPalmTreeOffset(i, j);
 		float rotation = Main.instance.TilesRenderer.GetWindCycle(i, j, TileSwaySystem.Instance.TreeWindCounter) * .1f;
 
 		if (IsTreeTop(i, j))
@@ -156,13 +154,13 @@ public abstract class CustomTree : ModTile
 
 		var source = new Rectangle(tile.TileFrameX % (frameSize * 12), 0, frameSize - 2, frameSize - 2);
 		var offset = Lighting.LegacyEngine.Mode > 1 && Main.GameZoomTarget == 1 ? Vector2.Zero : Vector2.One * 12;
-		var position = (new Vector2(i, j) + offset) * 16 - Main.screenPosition + GetPalmTreeOffset(i, j);
+		var position = (new Vector2(i, j) + offset) * 16 - Main.screenPosition + TreeHelper.GetPalmTreeOffset(i, j);
 
 		spriteBatch.Draw(texture, position, source, Lighting.GetColor(i, j), 0f, new Vector2(0, 0), 1f, SpriteEffects.None, 0f);
 		return false;
 	}
 
-	/// <summary> Use this to add special draw points whos coordinates are used in <see cref="DrawTreeFoliage"/>. </summary>
+	/// <summary> Use this to add special draw points which are used in <see cref="DrawTreeFoliage"/>. </summary>
 	public virtual void AddDrawPoints(int i, int j, SpriteBatch spriteBatch)
 	{
 		if (!TileDrawing.IsVisible(Framing.GetTileSafely(i, j)))
@@ -198,24 +196,6 @@ public abstract class CustomTree : ModTile
 
 	protected virtual void GenerateTree(int i, int j, int height)
 	{
-		short GetPalmOffset(int variance, int height, ref short offset)
-		{
-			if (j != 0 && offset != variance)
-			{
-				double num5 = (double)j / (double)height;
-				if (!(num5 < 0.25))
-				{
-					if ((!(num5 < 0.5) || !WorldGen.genRand.NextBool(13)) && (!(num5 < 0.7) || !WorldGen.genRand.NextBool(9)) && num5 < 0.95)
-						WorldGen.genRand.Next(5);
-
-					short num6 = (short)Math.Sign(variance);
-					offset = (short)(offset + (short)(num6 * 2));
-				}
-			}
-
-			return offset;
-		}
-
 		int variance = WorldGen.genRand.Next(-8, 9) * 2;
 		short xOff = 0;
 
@@ -230,7 +210,7 @@ public abstract class CustomTree : ModTile
 
 			WorldGen.PlaceTile(i, j - h, Type, true);
 			Framing.GetTileSafely(i, j - h).TileFrameX = (short)(frameX * frameSize);
-			Framing.GetTileSafely(i, j - h).TileFrameY = GetPalmOffset(variance, height, ref xOff);
+			Framing.GetTileSafely(i, j - h).TileFrameY = TreeHelper.GetPalmOffset(j, variance, height, ref xOff);
 		}
 
 		if (Main.netMode != NetmodeID.SinglePlayer)

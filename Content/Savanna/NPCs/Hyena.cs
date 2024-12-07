@@ -1,4 +1,5 @@
 using SpiritReforged.Common.NPCCommon;
+using SpiritReforged.Content.Vanilla.Items.Food;
 using System.Linq;
 using Terraria.Audio;
 
@@ -338,5 +339,10 @@ public class Hyena : ModNPC
 			return .2f;
 
 		return 0;
+	}
+	public override void ModifyNPCLoot(NPCLoot npcLoot)
+	{
+		npcLoot.AddCommon<RawMeat>(3);
+		npcLoot.AddCommon(ItemID.Leather, 2, 1, 2);
 	}
 }

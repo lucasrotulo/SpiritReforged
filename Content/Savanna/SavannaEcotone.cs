@@ -162,7 +162,7 @@ internal class SavannaEcotone : EcotoneBase
 
 	private static void GrowStuffOnGrass(int i, int j)
 	{
-		if (WorldGen.genRand.NextBool(20)) //Elephant grass patch
+		if (WorldGen.genRand.NextBool(17)) //Elephant grass patch
 			CreatePatch(WorldGen.genRand.Next(5, 11), 0, ModContent.TileType<ElephantGrass>(), ModContent.TileType<ElephantGrassShort>());
 
 		if (WorldGen.genRand.NextBool(9)) //Foliage pouch
@@ -197,6 +197,9 @@ internal class SavannaEcotone : EcotoneBase
 
 	private void GrowBaobab(GenerationProgress progress, GameConfiguration configuration)
 	{
+		if (!HasSavanna)
+			return;
+
 		if (!HasWaterHole || WorldGen.genRand.NextBool(3) && SavannaArea.Width > 150)
 		{
 			progress.Message = Language.GetTextValue("Mods.SpiritReforged.Generation.GreatBaobab");

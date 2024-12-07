@@ -64,25 +64,32 @@ public class AcaciaTree : CustomTree
 
 	public override void DrawTreeFoliage(int i, int j, SpriteBatch spriteBatch)
 	{
-		var position = new Vector2(i, j) * 16 - Main.screenPosition + new Vector2(10, 0) + GetPalmTreeOffset(i, j);
+		var position = new Vector2(i, j) * 16 - Main.screenPosition + new Vector2(10, 0) + TreeHelper.GetPalmTreeOffset(i, j);
 		float rotation = GetSway(i, j) * .08f;
 
-		if (Framing.GetTileSafely(i, j).TileType == Type && Framing.GetTileSafely(i, j - 1).TileType != Type) //Draw a treetop
+		if (Framing.GetTileSafely(i, j).TileType == Type && Framing.GetTileSafely(i, j - 1).TileType != Type) //Draw treetops
 		{
-			var source = topsTexture.Frame();
-			var origin = source.Bottom() - new Vector2(0, 2);
+			const int framesY = 2;
+
+			int frameY = Framing.GetTileSafely(i, j).TileFrameX / frameSize % framesY;
+
+			var source = topsTexture.Frame(1, framesY, 0, frameY, sizeOffsetY: -2);
+			var origin = new Vector2(source.Width / 2, source.Height) - new Vector2(0, 2);
 
 			spriteBatch.Draw(topsTexture.Value, position, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
 		}
 		else if (branchesTexture != null) //Draw branches
 		{
-			int frameX = (TileObjectData.GetTileStyle(Framing.GetTileSafely(i, j)) / numStyles == 2) ? 1 : 0;
-			//int frameY = Framing.GetTileSafely(i, j).TileFrameX / frameSize % 3;
+			const int framesX = 2;
+			const int framesY = 3;
 
-			var source = branchesTexture.Frame(2, 1, frameX, sizeOffsetX: -2, sizeOffsetY: -2);
-			var origin = new Vector2(frameX == 0 ? source.Width : 0, source.Height / 1.5f);
+			int frameX = (TileObjectData.GetTileStyle(Framing.GetTileSafely(i, j)) / numStyles == framesX) ? 1 : 0;
+			int frameY = Framing.GetTileSafely(i, j).TileFrameX / frameSize % framesY;
 
-			position.X += 6 * (frameX == 0 ? -1 : 1);
+			var source = branchesTexture.Frame(framesX, framesY, frameX, frameY, -2, -2);
+			var origin = new Vector2(frameX == 0 ? source.Width : 0, 44);
+
+			position.X += 6 * (frameX == 0 ? -1 : 1); //Directional offset
 
 			spriteBatch.Draw(branchesTexture.Value, position, source, Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
 		}
@@ -119,27 +126,8 @@ public class AcaciaTree : CustomTree
 
 	protected override void GenerateTree(int i, int j, int height)
 	{
-		short GetPalmOffset(int variance, int height, ref short offset)
-		{
-			if (j != 0 && offset != variance)
-			{
-				double num5 = (double)j / (double)height;
-				if (!(num5 < 0.25))
-				{
-					if ((!(num5 < 0.5) || !WorldGen.genRand.NextBool(13)) && (!(num5 < 0.7) || !WorldGen.genRand.NextBool(9)) && num5 < 0.95)
-						WorldGen.genRand.Next(5);
-
-					short num6 = (short)Math.Sign(variance);
-					offset = (short)(offset + (short)(num6 * 2));
-				}
-			}
-
-			return offset;
-		}
-
 		int variance = WorldGen.genRand.Next(-8, 9) * 2;
 		short xOff = 0;
-		bool branchLeft = false, branchRight = false; //Only allow one left and right branch per tree
 
 		for (int h = 0; h < height; h++)
 		{
@@ -147,30 +135,18 @@ public class AcaciaTree : CustomTree
 
 			if (WorldGen.genRand.NextBool(6)) //Select rare segments
 				style = 1;
-			
-			if (h > height / 2 && WorldGen.genRand.NextBool(4)) //Select branched segments by exceding the normal style limit
+
+			if (h > 2 && WorldGen.genRand.NextBool(5)) //Select branched segments by exceding the normal style limit
 			{
 				if (WorldGen.genRand.NextBool())
-				{
-					if (!branchLeft)
-					{
-						style += numStyles;
-						branchLeft = true;
-					}
-				}
+					style += numStyles; //Left branch
 				else
-				{
-					if (!branchRight)
-					{
-						style += numStyles * 2;
-						branchRight = true;
-					}
-				}
+					style += numStyles * 2; //Right branch
 			}
 
 			WorldGen.PlaceTile(i, j - h, Type, true);
 			Framing.GetTileSafely(i, j - h).TileFrameX = (short)(style * frameSize * 3 + WorldGen.genRand.Next(3) * frameSize);
-			Framing.GetTileSafely(i, j - h).TileFrameY = GetPalmOffset(variance, height, ref xOff);
+			Framing.GetTileSafely(i, j - h).TileFrameY = TreeHelper.GetPalmOffset(j, variance, height, ref xOff);
 		}
 
 		if (Main.netMode != NetmodeID.SinglePlayer)

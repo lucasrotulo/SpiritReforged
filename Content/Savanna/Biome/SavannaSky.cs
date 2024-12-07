@@ -24,7 +24,7 @@ public class SavannaSky : AutoloadedSky
 			: EaseFunction.EaseCircularIn.Ease(sunRiseSetFactor);
 
 		var sunRiseSetColor = new Color(242, 89, 58);
-		var midDayColor = new Color(254, 194, 130);
+		var midDayColor = new Color(184, 204, 217, 200);
 
 		var finalColor = Color.Lerp(sunRiseSetColor, midDayColor, EaseFunction.EaseQuadOut.Ease(midDayFactor));
 
@@ -66,7 +66,7 @@ public class SavannaSky : AutoloadedSky
 
 	public override Color OnTileColor(Color inColor) => Color.Lerp(inColor, SavannaColor(), 0.2f * FadeOpacity);
 
-	public override float GetCloudAlpha() => 0f;
+//	public override float GetCloudAlpha() => 0f;
 
 	internal override bool ActivationCondition(Player p) => !p.ZoneSkyHeight && p.InModBiome<SavannaBiome>();
 }

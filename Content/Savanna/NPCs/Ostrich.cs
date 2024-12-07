@@ -3,6 +3,7 @@ using SpiritReforged.Common.NPCCommon;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.TileCommon.TileSway;
 using SpiritReforged.Content.Particles;
+using SpiritReforged.Content.Vanilla.Items.Food;
 using System.Linq;
 using Terraria.Audio;
 using Terraria.Utilities;
@@ -300,6 +301,7 @@ public class Ostrich : ModNPC
 
 		return 0;
 	}
+	public override void ModifyNPCLoot(NPCLoot npcLoot) => npcLoot.AddCommon<RawMeat>(3);
 }
 
 public class OstrichImpact(Entity entity, Vector2 basePosition, Vector2 velocity, float width, float length, float rotation, int maxTime, float taperExponent, int detatchTime = -1) : MotionNoiseCone(entity, basePosition, velocity, width, length, rotation, maxTime, detatchTime)
@@ -343,4 +345,5 @@ public class OstrichImpact(Entity entity, Vector2 basePosition, Vector2 velocity
 		centeredPosition = MathHelper.Lerp(0.15f, 0.5f, easedProgress);
 		exponent = MathHelper.Lerp(2.5f, 4f, easedProgress);
 	}
+
 }

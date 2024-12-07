@@ -1,3 +1,4 @@
+using SpiritReforged.Common.BuffCommon;
 using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.ProjectileCommon;

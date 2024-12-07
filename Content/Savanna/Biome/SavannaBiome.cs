@@ -10,10 +10,9 @@ public class SavannaBiome : ModBiome
 
 	public override ModSurfaceBackgroundStyle SurfaceBackgroundStyle => ModContent.GetInstance<SavannaBGStyle>();
 	public override string BestiaryIcon => base.BestiaryIcon;
-	//Todo
-	//public override string BackgroundPath => base.BackgroundPath;
-	//public override Color? BackgroundColor => base.BackgroundColor;
-	//public override string MapBackground => base.MapBackground;
+	public override string BackgroundPath => MapBackground;
+	public override Color? BackgroundColor => base.BackgroundColor;
+	public override string MapBackground => "SpiritReforged/Assets/Textures/Backgrounds/SavannaMapBG";
 
 	public override bool IsBiomeActive(Player player)
 	{

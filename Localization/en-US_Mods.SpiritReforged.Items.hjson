@@ -944,7 +944,7 @@ WheatgrassSeedPouch: {
 
 RoyalKhopesh: {
 	DisplayName: Royal Khopesh
-	Tooltip: ""
+	Tooltip: "Does a 4 hit combo\nThe last hit in the combo does increased damage and always crits"
 }
 
 SavannaSandstormMusicBoxItem: {
@@ -1006,5 +1006,20 @@ SavannaCampfireItem: {
 
 AdornedBow: {
 	DisplayName: Adorned Bow
+	Tooltip: "Draw back an arrow for longer to increase damage and velocity\nReleasing the arrow at the perfect time increases damage further\nA perfect or fully charged shot fires an enchanted arrow"
+}
+
+SavannaFountainItem: {
+	DisplayName: Savanna Water Fountain
+	Tooltip: ""
+}
+
+DrywoodFenceItem: {
+	DisplayName: Drywood Fence
+	Tooltip: ""
+}
+
+DrywoodWallItem: {
+	DisplayName: Drywood Wall
 	Tooltip: ""
 }

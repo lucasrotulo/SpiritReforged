@@ -5,6 +5,7 @@ using SpiritReforged.Common.ProjectileCommon;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Content.Particles;
 using SpiritReforged.Common.Easing;
+using SpiritReforged.Common.BuffCommon;
 
 namespace SpiritReforged.Content.Forest.FairyWhistle;
 

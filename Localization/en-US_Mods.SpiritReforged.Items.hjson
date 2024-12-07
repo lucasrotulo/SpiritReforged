@@ -1003,3 +1003,8 @@ SavannaCampfireItem: {
 	DisplayName: Savanna Campfire
 	Tooltip: "{$ItemTooltip.Campfire}"
 }
+
+AdornedBow: {
+	DisplayName: Adorned Bow
+	Tooltip: ""
+}

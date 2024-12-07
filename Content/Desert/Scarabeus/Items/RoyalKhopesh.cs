@@ -29,7 +29,7 @@ public class RoyalKhopesh : ModItem
 	{
 		var p = Projectile.NewProjectileDirect(source, player.Center, Vector2.Zero, Item.shoot, Item.damage, Item.knockBack, player.whoAmI);
 		KhopeshPlayer kPlayer = player.GetModPlayer<KhopeshPlayer>();
-		RoyalKhopeshHeld khopesh = p.ModProjectile as RoyalKhopeshHeld;
+		var khopesh = p.ModProjectile as RoyalKhopeshHeld;
 
 		if (kPlayer.Combo != 2) //Don't use standard item use sound on use, allow the final swing to do it at a specified time
 			khopesh.DoSwingNoise();

@@ -1,23 +1,28 @@
 using SpiritReforged.Common.Easing;
 using SpiritReforged.Common.MathHelpers;
+using SpiritReforged.Common.Misc;
 using System.IO;
 using static Microsoft.Xna.Framework.MathHelper;
 using static Terraria.Player;
+using static SpiritReforged.Common.Easing.EaseFunction;
 
 namespace SpiritReforged.Common.ProjectileCommon;
 
-public abstract class BaseChargeBow(float maxChargePower = 2f, float perfectShotPower = 1.5f, float perfectShotTime = 30) : ModProjectile
+public abstract class BaseChargeBow(float maxChargePower = 2f, float perfectShotPower = 1.5f, int perfectShotTime = 30) : ModProjectile
 {
+	private const int STRING_BOUNCE_TIME = 30; //Could be adjusted to be dynamic if really needed
+
 	protected float Charge { get => Projectile.ai[0]; set => Projectile.ai[0] = value; }
 	protected float ChargeTime => Projectile.ai[1];  //Set by the item that spawns this projectile, using that item's usetime
 	protected float SelectedAmmo => Projectile.ai[2];
 
 	protected readonly float _chargePowerMax = maxChargePower; //The modifier to damage and shot speed when fully charged
 	protected readonly float _perfectShotPower = perfectShotPower; //Additional modifier during a perfect shot
+	protected readonly float _perfectShotMaxTime = perfectShotTime; //Amount of frames after fully charging that a perfect shot can be performed
 
-	protected float _perfectShotTime = perfectShotTime; //Amount of frames after fully charging that a perfect shot can be performed
-	protected bool firing = false;
-	protected Vector2 direction = Vector2.Zero;
+	protected int _perfectShotCurTimer = perfectShotTime;
+	protected bool _fired = false;
+	protected Vector2 _direction = Vector2.Zero;
 
 	public sealed override void SetDefaults()
 	{
@@ -26,6 +31,7 @@ public abstract class BaseChargeBow(float maxChargePower = 2f, float perfectShot
 		Projectile.DamageType = DamageClass.Ranged;
 		Projectile.penetrate = -1;
 		Projectile.tileCollide = false;
+		Projectile.timeLeft = STRING_BOUNCE_TIME;
 		SafeSetDefaults();
 	}
 
@@ -47,12 +53,11 @@ public abstract class BaseChargeBow(float maxChargePower = 2f, float perfectShot
 		player.heldProj = Projectile.whoAmI;
 		player.itemTime = 2;
 		player.itemAnimation = 2;
-		Projectile.timeLeft = 2;
-		Projectile.Center = player.MountedCenter + direction * 10;
+		Projectile.Center = player.MountedCenter + _direction * 10;
 		Projectile.velocity = Vector2.Zero;
-		Projectile.rotation = direction.ToRotation();
+		Projectile.rotation = _direction.ToRotation();
 
-		CompositeArmStretchAmount frontStretch = EaseFunction.EaseCircularOut.Ease(Charge) switch
+		CompositeArmStretchAmount frontStretch = EaseCircularOut.Ease(Charge) switch
 		{
 			< 0.25f => CompositeArmStretchAmount.Full,
 			< 0.5f => CompositeArmStretchAmount.ThreeQuarters,
@@ -63,29 +68,27 @@ public abstract class BaseChargeBow(float maxChargePower = 2f, float perfectShot
 		player.SetCompositeArmFront(true, frontStretch, player.itemRotation);
 		player.SetCompositeArmBack(true, CompositeArmStretchAmount.Full, player.itemRotation);
 
-		if (!firing)
+		if (!_fired)
 		{
+			Projectile.timeLeft = STRING_BOUNCE_TIME;
 			if (player.channel)
 			{
 				if (Charge < 1)
 					Charge = Min(Charge + 1 / ChargeTime, 1);
-				else
-					_perfectShotTime = Max(--_perfectShotTime, 0);
 
 				Charging();
 			}
 			else
 			{
-				bool perfectShot = Charge == 1 && _perfectShotTime > 0;
+				bool perfectShot = Charge == 1 && _perfectShotCurTimer > 0;
 				Shoot(perfectShot);
-				firing = true;
+				_fired = true;
+				Projectile.netUpdate = true;
 			}
 		}
-		else
-		{
-			//Todo: make the bow projectile last a bit so the string can bounce back after the arrow fires
-			Projectile.Kill();
-		}
+
+		if(Charge == 1)
+			_perfectShotCurTimer = (int)Max(--_perfectShotCurTimer, 0);
 	}
 
 	protected virtual void Shoot(bool perfectShot)
@@ -96,59 +99,74 @@ public abstract class BaseChargeBow(float maxChargePower = 2f, float perfectShot
 		if (perfectShot)
 			chargeMod *= _perfectShotPower;
 
-		if (player.PickAmmo(playerWeapon, out int ammoID, out float speed, out int damage, out float knockBack, out int dummy))
-		{
-			speed *= chargeMod;
-			damage = (int)(damage * chargeMod);
-			knockBack *= chargeMod;
+		float speed = playerWeapon.shootSpeed * chargeMod;
+		int damage = (int)(Projectile.damage * chargeMod);
+		float knockBack = Projectile.knockBack * chargeMod;
 
-			Projectile.NewProjectile(Projectile.GetSource_FromThis(), player.Center, direction * speed, ammoID, damage, knockBack, Projectile.owner);
-		}
-		else
-			Projectile.Kill();
+		Projectile.NewProjectile(Projectile.GetSource_FromThis(), player.Center, _direction * speed, (int)SelectedAmmo, damage, knockBack, Projectile.owner);
 	}
 
 	protected virtual void Charging() => AdjustDirection();
 
 	public override bool? CanDamage() => false;
 
-	public override void SendExtraAI(BinaryWriter writer) => writer.WriteVector2(direction);
+	public override void SendExtraAI(BinaryWriter writer)
+	{
+		writer.Write(_fired);
+		writer.Write(_perfectShotCurTimer);
+		writer.WriteVector2(_direction);
+	}
 
-	public override void ReceiveExtraAI(BinaryReader reader) => direction = reader.ReadVector2();
+	public override void ReceiveExtraAI(BinaryReader reader)
+	{
+		_fired = reader.ReadBoolean();
+		_perfectShotCurTimer = reader.ReadInt16();
+		_direction = reader.ReadVector2();
+	}
 
 	protected void AdjustDirection(float deviation = 0f)
 	{
 		Player player = Main.player[Projectile.owner];
 		if (Main.myPlayer == player.whoAmI)
 		{
-			direction = Main.MouseWorld - (player.Center - new Vector2(4, 4));
-			direction.Normalize();
-			direction = direction.RotatedBy(deviation);
+			_direction = Main.MouseWorld - (player.Center - new Vector2(4, 4));
+			_direction.Normalize();
+			_direction = _direction.RotatedBy(deviation);
 			Projectile.netUpdate = true;
 		}
 
-		player.itemRotation = direction.ToRotation();
+		player.itemRotation = _direction.ToRotation();
 		if (player.direction != 1)
 			player.itemRotation -= 3.14f;
 
 		player.itemRotation = WrapAngle(player.itemRotation) - player.direction * PiOver2;
 	}
 
+	public abstract void SetStringDrawParams(out float stringLength, out float maxDrawback, out Vector2 stringOrigin, out Color stringColor);
+
 	public override bool PreDraw(ref Color lightColor)
 	{
 		Texture2D projTex = TextureAssets.Projectile[Type].Value;
 
+		float perfectShotProgress = EaseSine.Ease(EaseCircularOut.Ease(1 - _perfectShotCurTimer / _perfectShotMaxTime));
+
 		//Draw string
-		int stringHalfLength = 15;
-		int maxDrawback = 10;
-		var stringOrigin = new Vector2(5, 25);
-		float stringScale = 2;
-		var stringColor = new Color(255, 234, 93).MultiplyRGB(lightColor);
-		int splineIterations = 20;
+		SetStringDrawParams(out float stringLength, out float maxDrawback, out Vector2 stringOrigin, out Color stringColor);
+
+		float stringHalfLength = stringLength/2;
+		const float stringScale = 2;
+		stringColor = stringColor.MultiplyRGB(lightColor);
+		stringColor = Color.Lerp(stringColor, Color.White, perfectShotProgress);
+
+		float timeLeftProgress = 1 - (float)Projectile.timeLeft / STRING_BOUNCE_TIME;
+		float easedCharge = EaseCircularOut.Ease(Charge);
+		float curDrawback = easedCharge - EaseOutElastic().Ease(timeLeftProgress) * easedCharge;
+		curDrawback *= maxDrawback;
 
 		var pointTop = new Vector2(stringOrigin.X, stringOrigin.Y - stringHalfLength);
-		var pointMiddle = new Vector2(stringOrigin.X - (maxDrawback * EaseFunction.EaseCircularOut.Ease(Charge)), stringOrigin.Y);
+		var pointMiddle = new Vector2(stringOrigin.X - curDrawback, stringOrigin.Y);
 		var pointBottom = new Vector2(stringOrigin.X, stringOrigin.Y + stringHalfLength);
+		int splineIterations = 30;
 		Vector2[] spline = Spline.CreateSpline([pointTop, pointMiddle, pointBottom], splineIterations);
 		for (int i = 0; i < splineIterations; i++)
 		{
@@ -162,16 +180,25 @@ public abstract class BaseChargeBow(float maxChargePower = 2f, float perfectShot
 		}
 
 		//Draw arrow
-		Texture2D arrowTex = TextureAssets.Projectile[(int)SelectedAmmo].Value;
-		Vector2 arrowPos = pointMiddle.RotatedBy(Projectile.rotation);
-		arrowPos -= (projTex.Size() / 2).RotatedBy(Projectile.rotation);
-		arrowPos += Projectile.Center - Main.screenPosition;
-		var arrowOrigin = new Vector2(arrowTex.Width / 2, arrowTex.Height);
+		if(!_fired)
+		{
+			Texture2D arrowTex = TextureAssets.Projectile[(int)SelectedAmmo].Value;
+			Vector2 arrowPos = pointMiddle.RotatedBy(Projectile.rotation);
+			arrowPos -= (projTex.Size() / 2).RotatedBy(Projectile.rotation);
+			arrowPos += Projectile.Center - Main.screenPosition;
+			var arrowOrigin = new Vector2(arrowTex.Width / 2, arrowTex.Height);
 
-		Main.spriteBatch.Draw(arrowTex, arrowPos, null, lightColor, Projectile.rotation + PiOver2, arrowOrigin, Projectile.scale, SpriteEffects.None, 0);
+			Main.spriteBatch.Draw(arrowTex, arrowPos, null, lightColor, Projectile.rotation + PiOver2, arrowOrigin, Projectile.scale, SpriteEffects.None, 0);
+
+			for(int i = 0; i < 2; i++)
+				Main.spriteBatch.Draw(arrowTex, arrowPos, null, Color.White.Additive() * perfectShotProgress, Projectile.rotation + PiOver2, arrowOrigin, Projectile.scale, SpriteEffects.None, 0);
+		}
 
 		//Draw proj
 		Projectile.QuickDraw();
+
+		for (int i = 0; i < 2; i++)
+			Projectile.QuickDraw(drawColor: Color.White.Additive() * perfectShotProgress);
 
 		return false;
 	}

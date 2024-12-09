@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SpiritReforged.Common.Easing;
 
@@ -36,6 +37,13 @@ public abstract class EaseFunction
 
 		return new PolynomialEase((float x) => (float)(1 + c3 * Math.Pow(x - 1, 3) + c1 * Math.Pow(x - 1, 2)));
 	}
+
+	public static EaseFunction EaseOutElastic(double maxValue = 2.09439) => new PolynomialEase((float x) => x switch
+	{
+		0 => 0,
+		1 => 1,
+		_ => (float)(Math.Pow(2, -10 * x) * Math.Sin((x * 10 - 0.75) * maxValue) + 1)
+	});
 
 	public static float CompoundEase(EaseFunction easeStart, EaseFunction easeEnd, float curTime, float cutOff = 0.5f)
 	{

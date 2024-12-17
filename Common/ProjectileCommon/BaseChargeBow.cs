@@ -35,9 +35,6 @@ public abstract class BaseChargeBow(float maxChargePower = 2f, float perfectShot
 		SafeSetDefaults();
 	}
 
-	protected virtual void SafeSetDefaults() { }
-	protected virtual void SafeAI() { }
-
 	public sealed override void AI()
 	{
 		if (!Projectile.TryGetOwner(out Player player))
@@ -86,12 +83,16 @@ public abstract class BaseChargeBow(float maxChargePower = 2f, float perfectShot
 				Projectile.netUpdate = true;
 			}
 		}
+		else
+			AfterShoot();
 
 		if(Charge == 1)
 			_perfectShotCurTimer = (int)Max(--_perfectShotCurTimer, 0);
 	}
 
-	protected virtual void Shoot(bool perfectShot)
+	public override bool? CanDamage() => false;
+
+	protected void Shoot(bool perfectShot)
 	{
 		Projectile.TryGetOwner(out Player player);
 		Item playerWeapon = player.HeldItem;
@@ -102,45 +103,22 @@ public abstract class BaseChargeBow(float maxChargePower = 2f, float perfectShot
 		float speed = playerWeapon.shootSpeed * chargeMod;
 		int damage = (int)(Projectile.damage * chargeMod);
 		float knockBack = Projectile.knockBack * chargeMod;
+		int type = GetCurAmmoType();
 
-		Projectile.NewProjectile(Projectile.GetSource_FromThis(), player.Center, _direction * speed, (int)SelectedAmmo, damage, knockBack, Projectile.owner);
+		var p = Projectile.NewProjectileDirect(Projectile.GetSource_FromThis(), player.Center, _direction * speed, type, damage, knockBack, Projectile.owner);
+		ModifyFiredProj(ref p, Charge == 1, perfectShot);
+
+		OnShoot(perfectShot);
 	}
 
-	protected virtual void Charging() => AdjustDirection();
+	protected virtual void Charging() { }
+	protected virtual void OnShoot(bool perfectShot) { }
+	protected virtual void AfterShoot() { }
+	protected virtual void SafeSetDefaults() { }
+	protected virtual void SafeAI() { }
+	protected virtual void ModifyFiredProj(ref Projectile projectile, bool fullCharge, bool perfectShot) { }
 
-	public override bool? CanDamage() => false;
-
-	public override void SendExtraAI(BinaryWriter writer)
-	{
-		writer.Write(_fired);
-		writer.Write(_perfectShotCurTimer);
-		writer.WriteVector2(_direction);
-	}
-
-	public override void ReceiveExtraAI(BinaryReader reader)
-	{
-		_fired = reader.ReadBoolean();
-		_perfectShotCurTimer = reader.ReadInt16();
-		_direction = reader.ReadVector2();
-	}
-
-	protected void AdjustDirection(float deviation = 0f)
-	{
-		Player player = Main.player[Projectile.owner];
-		if (Main.myPlayer == player.whoAmI)
-		{
-			_direction = Main.MouseWorld - (player.Center - new Vector2(4, 4));
-			_direction.Normalize();
-			_direction = _direction.RotatedBy(deviation);
-			Projectile.netUpdate = true;
-		}
-
-		player.itemRotation = _direction.ToRotation();
-		if (player.direction != 1)
-			player.itemRotation -= 3.14f;
-
-		player.itemRotation = WrapAngle(player.itemRotation) - player.direction * PiOver2;
-	}
+	protected virtual int? OverrideProjectile(bool fullCharge, bool perfectShot) => null;
 
 	public abstract void SetStringDrawParams(out float stringLength, out float maxDrawback, out Vector2 stringOrigin, out Color stringColor);
 
@@ -182,7 +160,8 @@ public abstract class BaseChargeBow(float maxChargePower = 2f, float perfectShot
 		//Draw arrow
 		if(!_fired)
 		{
-			Texture2D arrowTex = TextureAssets.Projectile[(int)SelectedAmmo].Value;
+			int type = GetCurAmmoType();
+			Texture2D arrowTex = TextureAssets.Projectile[type].Value;
 			Vector2 arrowPos = pointMiddle.RotatedBy(Projectile.rotation);
 			arrowPos -= (projTex.Size() / 2).RotatedBy(Projectile.rotation);
 			arrowPos += Projectile.Center - Main.screenPosition;
@@ -201,5 +180,44 @@ public abstract class BaseChargeBow(float maxChargePower = 2f, float perfectShot
 			Projectile.QuickDraw(drawColor: Color.White.Additive() * perfectShotProgress);
 
 		return false;
+	}
+
+	protected void AdjustDirection(float deviation = 0f)
+	{
+		Player player = Main.player[Projectile.owner];
+		if (Main.myPlayer == player.whoAmI)
+		{
+			_direction = Main.MouseWorld - (player.Center - new Vector2(4, 4));
+			_direction.Normalize();
+			_direction = _direction.RotatedBy(deviation);
+			Projectile.netUpdate = true;
+		}
+
+		player.itemRotation = _direction.ToRotation();
+		if (player.direction != 1)
+			player.itemRotation -= 3.14f;
+
+		player.itemRotation = WrapAngle(player.itemRotation) - player.direction * PiOver2;
+	}
+
+	protected int GetCurAmmoType()
+	{
+		bool perfectShot = _perfectShotCurTimer < _perfectShotMaxTime && _perfectShotCurTimer > 0;
+		bool fullCharge = Charge == 1;
+		return OverrideProjectile(fullCharge, perfectShot) ?? (int)SelectedAmmo;
+	}
+
+	public override void SendExtraAI(BinaryWriter writer)
+	{
+		writer.Write(_fired);
+		writer.Write(_perfectShotCurTimer);
+		writer.WriteVector2(_direction);
+	}
+
+	public override void ReceiveExtraAI(BinaryReader reader)
+	{
+		_fired = reader.ReadBoolean();
+		_perfectShotCurTimer = reader.ReadInt16();
+		_direction = reader.ReadVector2();
 	}
 }

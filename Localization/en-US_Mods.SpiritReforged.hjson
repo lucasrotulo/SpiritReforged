@@ -43,6 +43,7 @@ Projectiles: {
 	WheatgrassSeedProjectile.DisplayName: Wheatgrass Seed Projectile
 	RoyalKhopeshHeld.DisplayName: Royal Khopesh Held
 	AdornedBowHeld.DisplayName: Adorned Bow Held
+	AdornedArrow.DisplayName: Adorned Arrow
 }
 
 Configs: {

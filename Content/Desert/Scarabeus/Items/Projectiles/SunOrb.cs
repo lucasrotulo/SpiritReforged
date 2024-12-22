@@ -222,7 +222,7 @@ public class SunOrb : ModProjectile
 			mouseAngle = Pi + minAngle;
 		mouseAngle += Pi;
 
-		float maxDist = 200f;
+		float maxDist = 230f;
 		//Set the ray's height to be at least reach the player from the base offset- then extend it based on mouse position, up to the set max distance
 		rayHeight = -Min(_offset.Y, Max(-_mousePos.Y + _offset.Y, -maxDist));
 
@@ -235,7 +235,7 @@ public class SunOrb : ModProjectile
 		rayDist = Clamp(mouseDirection.X, -maxDist, maxDist);
 
 		//Scale the width based on how far the ray is from the player
-		var widthRange = new Vector2(100, 180);
+		var widthRange = new Vector2(100, 200);
 		rayWidth = Lerp(widthRange.X, widthRange.Y, Math.Abs(rayDist) / maxDist);
 	}
 

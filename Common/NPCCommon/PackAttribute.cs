@@ -1,4 +1,5 @@
-﻿using Terraria.DataStructures;
+﻿using SpiritReforged.Common.WorldGeneration;
+using Terraria.DataStructures;
 
 namespace SpiritReforged.Common.NPCCommon;
 
@@ -25,14 +26,25 @@ internal class PackGlobalNPC : GlobalNPC
 
 	public override void OnSpawn(NPC npc, IEntitySource source)
 	{
+		const int spawnRange = 20; //Tile distance
+
 		if (Main.netMode == NetmodeID.MultiplayerClient || source is EntitySource_Parent/*|| source is not EntitySource_SpawnNPC*/ || Tag(npc.type) is not SpawnPackAttribute atr)
 			return;
 
 		int packSize = Main.rand.Next(atr.MinSize, atr.MaxSize + 1) - 1;
 		for (int i = 0; i < packSize; i++)
 		{
-			var randomPos = npc.Center + new Vector2(25 * Main.rand.NextFloat(-1f, 1f), 0);
-			NPC.NewNPCDirect(new EntitySource_Parent(npc), randomPos, npc.type);
+			for (int a = 0; a < 20; a++) //20 intermediate attempts
+			{
+				var randomPos = npc.Center.ToTileCoordinates() + new Point((int)(spawnRange * Main.rand.NextFloat(-1f, 1f)), 0);
+				WorldMethods.FindGround(randomPos.X, ref randomPos.Y);
+
+				if (!WorldGen.PlayerLOS(randomPos.X, randomPos.Y)) //Don't spawn on screen
+				{
+					NPC.NewNPCDirect(new EntitySource_Parent(npc), randomPos.ToWorldCoordinates() - new Vector2(0, npc.height / 2 - 16), npc.type);
+					break;
+				}
+			}
 		}
 	}
 }

@@ -12,8 +12,8 @@ internal class LivingBaobabLeaf : ModTile
 		Main.tileBlockLight[Type] = true;
 
 		AddMapEntry(new Color(140, 156, 55));
-		HitSound = SoundID.Dig;
-		DustType = -1;
+		DustType = DustID.JunglePlants;
+		HitSound = SoundID.Grass;
 	}
 
 	public override void RandomUpdate(int i, int j)

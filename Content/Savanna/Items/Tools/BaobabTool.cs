@@ -1,4 +1,6 @@
-﻿namespace SpiritReforged.Content.Savanna.Items.Tools;
+﻿using SpiritReforged.Content.Savanna.Ecotone;
+
+namespace SpiritReforged.Content.Savanna.Items.Tools;
 
 internal class BaobabTool : ModItem
 {

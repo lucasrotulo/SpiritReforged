@@ -1,4 +1,5 @@
 ﻿using SpiritReforged.Common.TileCommon.TileSway;
+using SpiritReforged.Common.WorldGeneration;
 using System.Linq;
 using Terraria.DataStructures;
 using Terraria.GameContent.Drawing;
@@ -182,7 +183,7 @@ public abstract class CustomTree : ModTile
 		var instance = ModContent.GetInstance<T>() as CustomTree;
 		int height = instance.TreeHeight;
 
-		if (WorldGen.InWorld(i, j) && WorldGen.EmptyTileCheck(i, i, j, j - (height - 1)))
+		if (WorldGen.InWorld(i, j) && WorldMethods.AreaClear(i, j - (height - 1), 1, height))
 		{
 			WorldGen.KillTile(i, j);
 			instance.GenerateTree(i, j, height);

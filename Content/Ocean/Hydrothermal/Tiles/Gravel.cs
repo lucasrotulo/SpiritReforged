@@ -1,9 +1,15 @@
 using SpiritReforged.Common.TileCommon;
+using SpiritReforged.Content.Ocean.Items;
 
 namespace SpiritReforged.Content.Ocean.Hydrothermal.Tiles;
 
 public class Gravel : ModTile, IAutoloadTileItem
 {
+	public void AddItemRecipes(ModItem item) => item.CreateRecipe(10)
+		.AddIngredient(ModContent.ItemType<MineralSlag>(), 1)
+		.AddTile(TileID.WorkBenches)
+		.Register();
+
 	public override void SetStaticDefaults()
 	{
 		Main.tileSolid[Type] = true;

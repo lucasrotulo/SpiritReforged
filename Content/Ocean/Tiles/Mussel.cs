@@ -9,8 +9,7 @@ public class Mussel : ModTile, IAutoloadTileItem
 
 	public void SetItemDefaults(ModItem item)
 	{
-		item.Item.width = 30;
-		item.Item.height = 24;
+		item.Item.width = item.Item.height = 16;
 		item.Item.rare = ItemRarityID.Blue;
 	}
 

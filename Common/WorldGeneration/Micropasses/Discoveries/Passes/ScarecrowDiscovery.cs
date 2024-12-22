@@ -3,20 +3,16 @@ using System.Linq;
 using Terraria.IO;
 using Terraria.WorldBuilding;
 
-namespace SpiritReforged.Common.WorldGeneration.Micropasses;
+namespace SpiritReforged.Common.WorldGeneration.Micropasses.Discoveries.Passes;
 
-internal class ScarecrowMicropass : Micropass
+internal class ScarecrowDiscovery : Discovery
 {
 	public override string WorldGenName => "Scarecrow";
 
-	public override int GetWorldGenIndexInsert(List<GenPass> passes, ref bool afterIndex)
+	public override int GetWorldGenIndexInsert(List<GenPass> passes, List<Discovery> discoveries, ref bool afterIndex)
 	{
-		if (!WorldGen.genRand.NextBool(4))
-			return -1;
-
 		afterIndex = false;
-		//Generate before trees so we can have a wide open area
-		return passes.FindIndex(genpass => genpass.Name.Equals("Planting Trees"));
+		return passes.FindIndex(genpass => genpass.Name.Equals("Planting Trees")); //Generate before trees so we can have a wide open area
 	}
 
 	public override void Run(GenerationProgress progress, GameConfiguration config)
@@ -40,7 +36,7 @@ internal class ScarecrowMicropass : Micropass
 				goto retry;
 		}
 
-		if (!TileObject.CanPlace(x, y - 1, ModContent.TileType<Scarecrow>(), 0, 0, out var _, true) 
+		if (!TileObject.CanPlace(x, y - 1, ModContent.TileType<Scarecrow>(), 0, 0, out var _, true)
 			|| Collision.WetCollision(new Vector2(x, y - 3) * 16, 16, 16 * 3)
 			|| !WorldMethods.AreaClear(x - 1, y - 3, 3, 3))
 			goto retry;
@@ -54,10 +50,8 @@ internal class ScarecrowMicropass : Micropass
 		{
 			y = start.Y - 30;
 			while (!Main.tile[x, y].HasTile || !anchors.Contains(Main.tile[x, y].TileType)) //Loop to valid ground
-			{
 				if (++y > Main.worldSurface + 100)
 					break;
-			}
 
 			if (Main.tile[x, y].HasTile && anchors.Contains(Main.tile[x, y].TileType))
 				WorldGen.PlaceTile(x, y - 1, ModContent.TileType<Wheatgrass>(), true, style: Main.rand.Next(6));

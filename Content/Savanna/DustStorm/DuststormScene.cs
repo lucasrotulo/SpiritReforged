@@ -34,8 +34,8 @@ public class DustStormScene : ModSceneEffect
 				Overlays.Scene.Activate(sandstorm, center); //Might have no effect?
 			}
 
-			if (!player.ZoneSandstorm)
-				Sandstorm.Severity = MathHelper.Max(Sandstorm.Severity - .01f, intensity); //Transition into a calmer severity if necessary
+			Sandstorm.Severity = MathHelper.Max(Sandstorm.Severity - .01f, intensity); //Transition into a calmer severity if necessary
+			player.ZoneSandstorm = false;
 		}
 
 		if (!mPlayer.ZoneDustStorm && wasDustStorm && Filters.Scene[sandstorm].IsActive() && !player.ZoneSandstorm)

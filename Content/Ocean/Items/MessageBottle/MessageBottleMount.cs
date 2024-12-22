@@ -102,7 +102,7 @@ public class MessageBottleMount : ModMount
 			player.gravity *= 1.5f;
 			if (wetCounter < 0)
 			{
-				if (Collision.SolidCollision(player.position, player.width, player.height + 16))
+				if (player.velocity.Y == 0)
 				{
 					player.velocity.X *= 0.92f;
 					MountData.runSpeed = 0.05f;

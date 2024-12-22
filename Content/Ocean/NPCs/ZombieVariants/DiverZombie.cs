@@ -8,7 +8,11 @@ public class DiverZombie : ReplaceNPC
 	public override int[] TypesToReplace => [NPCID.Zombie, NPCID.BaldZombie,
 		NPCID.PincushionZombie, NPCID.SlimedZombie, NPCID.SwampZombie, NPCID.TwiggyZombie];
 
-	public override void StaticDefaults() => Main.npcFrameCount[Type] = 4;
+	public override void StaticDefaults()
+	{
+		Main.npcFrameCount[Type] = 4;
+		NPCID.Sets.Zombies[Type] = true;
+	}
 
 	public override void SetDefaults()
 	{

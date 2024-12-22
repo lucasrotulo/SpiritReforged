@@ -1,4 +1,5 @@
 using SpiritReforged.Content.Savanna.Biome;
+using SpiritReforged.Content.Vanilla.Items.Food;
 using System.IO;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -7,6 +8,7 @@ using Terraria.Utilities;
 
 namespace SpiritReforged.Content.Savanna.NPCs;
 
+[AutoloadBanner]
 public class PeevedTumbler : ModNPC
 {
 	public ref float Counter => ref NPC.ai[0];
@@ -99,7 +101,7 @@ public class PeevedTumbler : ModNPC
 			NPC.velocity.X += windPush;
 		}
 
-		if (heldItemType != ItemID.None && Main.rand.NextBool(30)) //Sparkle when carrying an item
+		if (heldItemType != ItemID.None && Main.rand.NextBool(26)) //Sparkle when carrying an item
 			Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.TreasureSparkle, Scale: Main.rand.NextFloat(.25f, 1f)).velocity = Vector2.Zero;
 	}
 
@@ -168,4 +170,5 @@ public class PeevedTumbler : ModNPC
 
 		return 0;
 	}
+	public override void ModifyNPCLoot(NPCLoot npcLoot) => npcLoot.AddCommon(ItemID.Nachos, 33);
 }

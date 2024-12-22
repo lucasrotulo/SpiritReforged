@@ -1,5 +1,9 @@
+using SpiritReforged.Common.Misc;
+using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.ProjectileCommon;
 using SpiritReforged.Content.Buffs.SummonTag;
+using SpiritReforged.Content.Ocean.Items.Reefhunter.Particles;
+using Terraria.Audio;
 
 namespace SpiritReforged.Content.Ocean.Items.PoolNoodle;
 
@@ -30,5 +34,6 @@ public class PoolNoodleProj : BaseWhipProj
 	{
 		base.OnHitNPC(target, hit, damageDone);
 		target.AddBuff(ModContent.BuffType<SummonTag3>(), 360);
+		target.AddBuff(ModContent.BuffType<PoolNoodleBubbleBuff>(), 600);
 	}
 }

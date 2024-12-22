@@ -17,7 +17,7 @@ public class Hyena : ModNPC
 	private bool NearlyDead => NPC.life < NPC.lifeMax / 4;
 
 	private int drownTime;
-
+	private bool angryBark = false;
 	private enum State : byte
 	{
 		TrotEnd,
@@ -63,7 +63,8 @@ public class Hyena : ModNPC
 		NPC.Size = new Vector2(40, 40);
 		NPC.damage = 10;
 		NPC.defense = 0;
-		NPC.lifeMax = 100;
+		NPC.lifeMax = 40;
+		NPC.value = 38f;
 		NPC.HitSound = SoundID.NPCHit1;
 		NPC.DeathSound = SoundID.NPCDeath1;
 		NPC.knockBackResist = .45f;
@@ -80,7 +81,10 @@ public class Hyena : ModNPC
 		{
 			case (int)State.TrotEnd: //Doubles as our idle state
 				if (Counter == 100 && Main.rand.NextBool())
+				{
+					SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/Hyena_Laugh") with { Volume = 1.25f, PitchVariance = 0.4f, MaxInstances = 3 }, NPC.Center);
 					ChangeState(State.Laugh, false);
+				}
 				else if (OnTransitionFrame)
 				{
 					if (Counter >= 30)
@@ -164,6 +168,12 @@ public class Hyena : ModNPC
 
 		if (IsAngry) //Accounts for states TrottingAngry and BarkingAngry
 		{
+			if (!angryBark)
+			{
+				SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/Hyena_Bark") with { Volume = .18f, PitchVariance = .4f, MaxInstances = 0 }, NPC.Center);
+				angryBark = true;
+			}
+
 			TryJump();
 
 			const float runSpeed = 5.5f;
@@ -283,6 +293,11 @@ public class Hyena : ModNPC
 		if (!Main.dedServ && dead)
 			for (int i = 1; i < 4; i++)
 				Gore.NewGore(NPC.GetSource_Death(), Main.rand.NextVector2FromRectangle(NPC.getRect()), NPC.velocity * Main.rand.NextFloat(.3f), Mod.Find<ModGore>("Hyena" + i).Type);
+
+		SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/NPCHit/Hyena_Hit") with { Volume = .75f, Pitch = -.05f, PitchVariance = .4f, MaxInstances = 0 }, NPC.Center);
+
+		if (dead)
+			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/NPCDeath/Hyena_Death") with { Volume = .75f, Pitch = .2f, MaxInstances = 0 }, NPC.Center);
 
 		TryAggro();
 		const int detectDistance = 16 * 25;

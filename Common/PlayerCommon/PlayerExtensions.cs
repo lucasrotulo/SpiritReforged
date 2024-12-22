@@ -37,7 +37,9 @@ internal static class PlayerExtensions
 	public static void SetItemTimer<T>(this Player player, int value, int slot = -1) where T : ModItem, ITimerItem 
 		=> player.GetModPlayer<MiscAccessoryPlayer>().timers[ModContent.GetInstance<T>().GetType().Name + (slot == -1 ? "" : slot.ToString())] = value;
 
-	public static bool HasAccessory(this Player player, Item item) => item.ModItem != null && item.ModItem is AccessoryItem acc && player.GetModPlayer<MiscAccessoryPlayer>().accessory[acc.AccName];
+	public static bool HasAccessory(this Player player, Item item) => item.ModItem is AccessoryItem acc && player.GetModPlayer<MiscAccessoryPlayer>().accessory[acc.AccName];
 	public static bool HasAccessory(this Player player, ModItem item) => item is AccessoryItem acc && player.GetModPlayer<MiscAccessoryPlayer>().accessory[acc.AccName];
 	public static bool HasAccessory<TItem>(this Player player) where TItem : AccessoryItem => player.GetModPlayer<MiscAccessoryPlayer>().accessory[ModContent.GetInstance<TItem>().AccName];
+	public static bool HasAccessory(this Player player, int itemId) => HasAccessory(player, ContentSamples.ItemsByType[itemId]);
+
 }

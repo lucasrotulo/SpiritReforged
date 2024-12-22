@@ -18,7 +18,7 @@ public class ClawCannon : ModItem
 		Item.useTime = Item.useAnimation = 30;
 		Item.useStyle = ItemUseStyleID.Shoot;
 		Item.knockBack = 4;
-		Item.value = Item.sellPrice(0, 0, 5, 0);
+		Item.value = Item.sellPrice(0, 0, 14, 0);
 		Item.rare = ItemRarityID.Blue;
 		Item.crit = 6;
 		Item.autoReuse = true;

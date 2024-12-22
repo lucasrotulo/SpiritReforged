@@ -23,6 +23,18 @@ public class WorldMethods
 		return y;
 	}
 
+	/// <summary> Scans up, then down for the nearest surface tile. </summary>
+	public static int FindGround(int i, ref int j)
+	{
+		while (WorldGen.SolidOrSlopedTile(i, j - 1))
+			j--; //Up
+
+		while (!WorldGen.SolidOrSlopedTile(i, j))
+			j++; //Down
+
+		return j;
+	}
+
 	public static void CragSpike(int X, int Y, int length, int height, ushort type2, float slope, float sloperight)
 	{
 		float trueslope = 1 / slope;
@@ -81,6 +93,22 @@ public class WorldMethods
 			for (int j = y - 1; j < y + 2; ++j)
 				if (!WorldGen.SolidTile(i, j) && (i != x || j != y))
 					return true;
+		return false;
+	}
+
+	public static bool CloudsBelow(int x, int y, out int addY)
+	{
+		const int scanDistance = 30;
+		HashSet<int> types = [TileID.Cloud, TileID.RainCloud, TileID.SnowCloud];
+
+		for (int i = 0; i < scanDistance; i++)
+			if (Main.tile[x, y + i].HasTile && types.Contains(Main.tile[x, y + i].TileType))
+			{
+				addY = scanDistance;
+				return true;
+			}
+
+		addY = 0;
 		return false;
 	}
 }

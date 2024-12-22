@@ -33,8 +33,8 @@ public class ElephantGrass : ModTile, ISwayInWind
 		TileObjectData.newTile.RandomStyleRange = 5;
 		TileObjectData.addTile(Type);
 
-		AddMapEntry(new Color(21, 92, 19));
-		DustType = DustID.Grass;
+		AddMapEntry(new Color(104, 156, 70));
+		DustType = DustID.JunglePlants;
 		HitSound = SoundID.Grass;
 	}
 
@@ -122,8 +122,8 @@ public class ElephantGrassShort : ElephantGrass
 		TileObjectData.newTile.RandomStyleRange = 3;
 		TileObjectData.addTile(Type);
 
-		AddMapEntry(new Color(21, 92, 19));
-		DustType = DustID.Grass;
+		AddMapEntry(new Color(104, 156, 70));
+		DustType = DustID.JunglePlants;
 		HitSound = SoundID.Grass;
 	}
 

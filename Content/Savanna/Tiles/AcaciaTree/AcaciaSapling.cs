@@ -29,15 +29,17 @@ public class AcaciaSapling : ModTile
 		TileObjectData.newTile.StyleMultiplier = 3;
 		TileObjectData.addTile(Type);
 
-		TileID.Sets.TreeSapling[Type] = true;
+		//TileID.Sets.TreeSapling[Type] = true; //Will break on tile update if this is true
 		TileID.Sets.CommonSapling[Type] = true;
 		TileID.Sets.SwaysInWindBasic[Type] = true;
 		TileMaterials.SetForTileId(Type, TileMaterials._materialsByName["Plant"]);
 
-		AddMapEntry(new Color(200, 200, 200), Language.GetText("MapObject.Sapling"));
+		AddMapEntry(new Color(170, 120, 100), Language.GetText("MapObject.Sapling"));
 
 		DustType = DustID.WoodFurniture;
 		AdjTiles = [TileID.Saplings];
+
+		SaplingHandler.RegisterSapling(Type);
 	}
 
 	public override void NumDust(int i, int j, bool fail, ref int num) => num = fail ? 1 : 3;
@@ -50,7 +52,7 @@ public class AcaciaSapling : ModTile
 
 	public override void SetSpriteEffects(int i, int j, ref SpriteEffects effects)
 	{
-		if (i % 2 == 1)
+		if (i % 2 == 0)
 			effects = SpriteEffects.FlipHorizontally;
 	}
 }

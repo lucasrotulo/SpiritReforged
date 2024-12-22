@@ -11,9 +11,9 @@ public class TridentZombie : ReplaceNPC
 	{
 		Main.npcFrameCount[NPC.type] = Main.npcFrameCount[NPCID.ArmedZombie];
 
-		var drawModifiers = new NPCID.Sets.NPCBestiaryDrawModifiers()
-		{ Hide = true };
+		var drawModifiers = new NPCID.Sets.NPCBestiaryDrawModifiers() { Hide = true };
 		NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, drawModifiers);
+		NPCID.Sets.Zombies[Type] = true;
 	}
 
 	public override void SetDefaults()

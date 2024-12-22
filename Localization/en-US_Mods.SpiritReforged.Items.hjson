@@ -1032,3 +1032,57 @@ DrywoodWallItem: {
 	DisplayName: Drywood Wall
 	Tooltip: ""
 }
+
+ZiplineGun: {
+	Tooltip:
+		'''
+		Use left or right click to latch each side of the rail to tiles
+		Rails carry players swiftly in either direction
+		Tethers can be removed when hovered over or replaced by firing
+		'''
+	DisplayName: Rail-gun
+}
+
+FrostbiteItem: {
+	DisplayName: Frostbite
+	Tooltip: Creates a slow-moving blizzard that follows your cursor
+}
+
+RogueCrest: {
+	DisplayName: Rogue's Crest
+	Tooltip:
+		'''
+		Summons a rusted sword to fight for you
+		This sword does not take up minion slots
+		'''
+}
+
+GildedScarab: {
+	DisplayName: Gilded Scarab
+	Tooltip:
+		'''
+		Getting hit provides a temporary buff to defense
+		This shield provides more defense based on the damage taken
+		'''
+}
+
+SparrowItem: {
+	DisplayName: Sparrow
+	Tooltip: ""
+}
+
+Blunderbuss: {
+	DisplayName: Blunderbuss
+	Tooltip: Fires a wide spread of bullets
+}
+
+SafekeeperRing: {
+	DisplayName: Safekeeper's Ring
+	Tooltip:
+		'''
+		Slightly increases damage dealt against undead
+		'It gives off an eerie light'
+		'''
+}
+
+PeevedTumblerBannerItem.DisplayName: Peeved Tumbler Banner

@@ -44,6 +44,11 @@ Projectiles: {
 	RoyalKhopeshHeld.DisplayName: Royal Khopesh Held
 	AdornedBowHeld.DisplayName: Adorned Bow Held
 	AdornedArrow.DisplayName: Adorned Arrow
+	Zipline.DisplayName: Zipline
+	FrostbiteProj.DisplayName: Frostbite
+	FrozenFragment.DisplayName: Frozen Fragment
+	FrostbiteHeldOut.DisplayName: Frostbite Held Out
+	RogueKnifeMinion.DisplayName: Rusted Knife
 }
 
 Configs: {
@@ -173,6 +178,21 @@ Buffs: {
 	TumblerPetBuff: {
 		DisplayName: Ambivalent Tumbler
 		Description: A friendly tumbleweed is following you
+	}
+
+	Frozen: {
+		DisplayName: Frozen
+		Description: Slows enemy speed
+	}
+
+	GildedScarabBuff: {
+		DisplayName: Scarab Shield
+		Description: Defense increased by {0}
+	}
+
+	PoolNoodleBubbleBuff: {
+		DisplayName: Pool Noodle Bubble Buff
+		Description: You've found the secret Spirit Lore Codex... Stay tuned for our superboss Darksteel, the Fallen Star!
 	}
 }
 

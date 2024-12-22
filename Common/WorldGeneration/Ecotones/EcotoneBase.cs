@@ -13,10 +13,6 @@ internal abstract class EcotoneBase : ILoadable
 	}
 
 	protected virtual void InternalLoad() { }
-
-	public void Unload()
-	{
-	}
-
+	public void Unload() { }
 	public abstract void AddTasks(List<GenPass> tasks, List<EcotoneSurfaceMapping.EcotoneEntry> entries);
 }

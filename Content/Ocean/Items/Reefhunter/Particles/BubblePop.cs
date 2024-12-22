@@ -7,12 +7,13 @@ public class BubblePop : Particle
 	private const int NUMFRAMES = 8;
 	private readonly float _opacity;
 
-	public BubblePop(Vector2 position, float scale, float opacity, int animationTime)
+	public BubblePop(Vector2 position, float scale, float opacity, int animationTime, float rotation = 0f)
 	{
 		Position = position;
 		Scale = scale;
 		_opacity = opacity;
 		MaxTime = animationTime;
+		Rotation = rotation;
 	}
 
 	public override ParticleDrawType DrawType => ParticleDrawType.CustomBatchedAdditiveBlend;
@@ -26,6 +27,6 @@ public class BubblePop : Particle
 
 		Color lightColor = Lighting.GetColor(Position.ToTileCoordinates().X, Position.ToTileCoordinates().Y);
 
-		spriteBatch.Draw(drawTex, Position - Main.screenPosition, drawFrame, lightColor * _opacity, 0, drawFrame.Size() / 2, Scale, SpriteEffects.None, 0);
+		spriteBatch.Draw(drawTex, Position - Main.screenPosition, drawFrame, lightColor * _opacity, Rotation, drawFrame.Size() / 2, Scale, SpriteEffects.None, 0);
 	}
 }

@@ -21,6 +21,7 @@ public class Ostrich : ModNPC
 
 	private bool OnTransitionFrame => (int)NPC.frameCounter == endFrames[AIState] - 1;
 	private bool Charging => Math.Abs(NPC.velocity.X) > runSpeed;
+	private bool chargeSound = false;
 
 	private float frameRate = .2f;
 	private int drownTime;
@@ -53,7 +54,8 @@ public class Ostrich : ModNPC
 		NPC.Size = new Vector2(40, 60);
 		NPC.damage = 20;
 		NPC.defense = 0;
-		NPC.lifeMax = 100;
+		NPC.value = 45f;
+		NPC.lifeMax = 62;
 		NPC.HitSound = SoundID.NPCHit1;
 		NPC.DeathSound = SoundID.NPCDeath1;
 		NPC.knockBackResist = .45f;
@@ -188,6 +190,12 @@ public class Ostrich : ModNPC
 		else
 			NoCollideTime = 0;
 
+		if (Charging && !chargeSound && Counter != 0)
+		{
+			SoundEngine.PlaySound(SoundID.DD2_WyvernDiveDown with { Volume = .5f, PitchVariance = .5f, MaxInstances = 0 }, NPC.Center);
+			chargeSound = true;
+		}
+
 		if (Charging && Counter % 15 == 0)
 			ParticleHandler.SpawnParticle(new OstrichImpact(
 				NPC,
@@ -224,6 +232,7 @@ public class Ostrich : ModNPC
 		NPC.frameCounter = 0;
 		frameRate = .2f;
 		Counter = 0;
+		chargeSound = false;
 		AIState = (int)toState;
 
 		if (sync && Main.dedServ)
@@ -240,6 +249,10 @@ public class Ostrich : ModNPC
 	{
 		bool dead = NPC.life <= 0;
 
+		SoundEngine.PlaySound(SoundID.NPCHit11 with { PitchVariance = .5f, MaxInstances = 0, Pitch = -.25f }, NPC.Center);
+		SoundEngine.PlaySound(SoundID.Grass with { Volume = .45f, PitchVariance = .5f, MaxInstances = 0 }, NPC.Center);
+
+
 		for (int i = 0; i < (dead ? 30 : 4); i++)
 		{
 			Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.Blood, Scale: Main.rand.NextFloat(.8f, 2f))
@@ -247,8 +260,12 @@ public class Ostrich : ModNPC
 		}
 
 		if (!Main.dedServ && dead)
+		{
 			for (int i = 1; i < 6; i++)
 				Gore.NewGore(NPC.GetSource_Death(), Main.rand.NextVector2FromRectangle(NPC.getRect()), NPC.velocity * Main.rand.NextFloat(), Mod.Find<ModGore>("Ostrich" + i).Type);
+
+			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/NPCDeath/Ostrich_Death") with { Volume = .75f, PitchVariance = .5f, Pitch = -.5f, MaxInstances = 0 }, NPC.Center);
+		}
 
 		const int scareDistance = 16 * 20;
 		var pack = Main.npc.Where(x => x.active && x.type == Type 
@@ -345,5 +362,4 @@ public class OstrichImpact(Entity entity, Vector2 basePosition, Vector2 velocity
 		centeredPosition = MathHelper.Lerp(0.15f, 0.5f, easedProgress);
 		exponent = MathHelper.Lerp(2.5f, 4f, easedProgress);
 	}
-
 }

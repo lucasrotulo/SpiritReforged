@@ -8,7 +8,11 @@ public class SailorZombie : ReplaceNPC
 	public override int[] TypesToReplace => [NPCID.Zombie, NPCID.BaldZombie, 
 		NPCID.PincushionZombie, NPCID.SlimedZombie, NPCID.SwampZombie, NPCID.TwiggyZombie];
 
-	public override void StaticDefaults() => Main.npcFrameCount[Type] = Main.npcFrameCount[NPCID.Zombie];
+	public override void StaticDefaults()
+	{
+		Main.npcFrameCount[Type] = Main.npcFrameCount[NPCID.Zombie];
+		NPCID.Sets.Zombies[Type] = true;
+	}
 
 	public override void SetDefaults()
 	{

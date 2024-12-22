@@ -52,20 +52,28 @@ float GetAngle(float2 input, float2 centeredPos, float baseAngle)
     return atan2(input.y - centeredPos.y, input.x - centeredPos.x) + baseAngle;
 }
 
-const float fadeThreshold = 0.5f;
-float4 MainPS(VertexShaderOutput input) : COLOR0
+float EaseCircularIn(float x)
 {
-    float xCoord = GetAngle(input.TextureCoordinates, float2(0.5f, 1), 1.57f);
-    xCoord /= 3.14f / 4;
-    xCoord *= lerp(3, 0.5f, pow(input.TextureCoordinates.y, 0.5f));
-    xCoord += 0.5f;
+    return 1 - sqrt(1 - pow(x, 2));
+}
+
+float EaseCircularOut(float x)
+{
+    return sqrt(1 - pow(x - 1, 2));;
+}
+
+float2 GetNoiseCoords(float2 input)
+{
+    float noiseXCoord = ((input.x - 0.5f) * textureStretch.x) + 0.5f;
+    float2 noiseCoords = float2(noiseXCoord, (input.y * textureStretch.y));
     
-    if (xCoord > 1 || xCoord < 0)
-        return float4(0, 0, 0, 0);
+    if (scroll.x > 0)
+        noiseCoords.x = EaseCircularIn(noiseCoords.x);
+    else
+        noiseCoords.x = EaseCircularOut(noiseCoords.x);
     
-    float noiseXCoord = ((xCoord - 0.5f) * textureStretch.x) + 0.5f;
-    float2 noiseCoords = float2(noiseXCoord, (input.TextureCoordinates.y * textureStretch.y) + scroll.y);
-    noiseCoords.x += lerp(0, scroll.x, pow(1 - input.TextureCoordinates.y, 2)) * textureStretch.y;
+    noiseCoords.x += scroll.y;
+    noiseCoords.x += lerp(0, scroll.x, pow(1 - input.y, 3)) * textureStretch.y;
     noiseCoords.x %= 1;
     
     if (flipCoords)
@@ -75,12 +83,26 @@ float4 MainPS(VertexShaderOutput input) : COLOR0
         noiseCoords.y = temp;
     }
     
+    return noiseCoords;
+}
+
+const float fadeThreshold = 0.5f;
+float4 MainPS(VertexShaderOutput input) : COLOR0
+{
+    float xCoord = GetAngle(input.TextureCoordinates, float2(0.5f, 1), 1.57f);
+    xCoord /= 3.14f / 4;
+    xCoord *= lerp(4, 0.5f, pow(input.TextureCoordinates.y, 0.5f));
+    xCoord += 0.5f;
+    
+    if (xCoord >= 1 || xCoord <= 0)
+        return float4(0, 0, 0, 0);
+    
     float noiseExponent = lerp(texExponentRange.x, texExponentRange.y, input.TextureCoordinates.y);
-    float strength = pow(tex2D(textureSampler, noiseCoords).r, noiseExponent) * textureStrength;
+    float strength = pow(tex2D(textureSampler, GetNoiseCoords(float2(xCoord, input.TextureCoordinates.y))).r, noiseExponent) * textureStrength;
     float absXDist = 1 - (abs(xCoord - 0.5f) * 2);
     float circularXDist = sqrt(1 - pow(absXDist - 1, 2));
     strength += circularXDist;
-    strength *= pow(circularXDist, 3);
+    strength *= pow(circularXDist, 2);
     strength *= pow(input.TextureCoordinates.y, 0.5f);
     strength *= pow(1 - input.TextureCoordinates.y, 0.5f);
     

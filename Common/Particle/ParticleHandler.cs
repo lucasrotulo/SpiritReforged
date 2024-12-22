@@ -184,7 +184,7 @@ public static class ParticleHandler
 				if (batchedParticle.DrawType == ParticleDrawType.CustomBatchedAdditiveBlend)
 					batchedParticle.CustomDraw(spriteBatch);
 				else
-					spriteBatch.Draw(particleTextures[batchedParticle.Type], batchedParticle.Position - Main.screenPosition, null, batchedParticle.Color, batchedParticle.Rotation, batchedParticle.Origin + particleTextures[batchedParticle.Type].Size() / 2, batchedParticle.Scale * Main.GameViewMatrix.Zoom, SpriteEffects.None, 1f);
+					spriteBatch.Draw(particleTextures[batchedParticle.Type], batchedParticle.Position - Main.screenPosition, null, batchedParticle.Color, batchedParticle.Rotation, batchedParticle.Origin + particleTextures[batchedParticle.Type].Size() / 2, batchedParticle.Scale, SpriteEffects.None, 1f);
 			}
 
 			spriteBatch.End();

@@ -167,10 +167,7 @@ public abstract class BaseChargeBow(float maxChargePower = 2f, float perfectShot
 			arrowPos += Projectile.Center - Main.screenPosition;
 			var arrowOrigin = new Vector2(arrowTex.Width / 2, arrowTex.Height);
 
-			Main.spriteBatch.Draw(arrowTex, arrowPos, null, lightColor, Projectile.rotation + PiOver2, arrowOrigin, Projectile.scale, SpriteEffects.None, 0);
-
-			for(int i = 0; i < 2; i++)
-				Main.spriteBatch.Draw(arrowTex, arrowPos, null, Color.White.Additive() * perfectShotProgress, Projectile.rotation + PiOver2, arrowOrigin, Projectile.scale, SpriteEffects.None, 0);
+			DrawArrow(arrowTex, arrowPos, arrowOrigin, perfectShotProgress, lightColor);
 		}
 
 		//Draw proj
@@ -180,6 +177,13 @@ public abstract class BaseChargeBow(float maxChargePower = 2f, float perfectShot
 			Projectile.QuickDraw(drawColor: Color.White.Additive() * perfectShotProgress);
 
 		return false;
+	}
+	protected virtual void DrawArrow(Texture2D arrowTex, Vector2 arrowPos, Vector2 arrowOrigin, float perfectShotProgress, Color lightColor)
+	{
+		Main.spriteBatch.Draw(arrowTex, arrowPos, null, lightColor, Projectile.rotation + PiOver2, arrowOrigin, Projectile.scale, SpriteEffects.None, 0);
+
+		for (int i = 0; i < 2; i++)
+			Main.spriteBatch.Draw(arrowTex, arrowPos, null, Color.White.Additive() * perfectShotProgress, Projectile.rotation + PiOver2, arrowOrigin, Projectile.scale, SpriteEffects.None, 0);
 	}
 
 	protected void AdjustDirection(float deviation = 0f)

@@ -72,7 +72,7 @@ public class PulseCircle : Particle
 			Position += Velocity;
 
 		float Progress = GetProgress();
-
+		Velocity *= 0.93f;
 		Scale = _maxRadius * Progress;
 		_opacity = Math.Min(3 * (1 - Progress), 1f);
 	}

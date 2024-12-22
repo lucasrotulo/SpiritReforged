@@ -220,8 +220,8 @@ public class JellyfishMinion : BaseMinion
 						1f,
 						50,
 						20,
-						"Lightning",
-						new Vector2(1f, 0.2f),
+						"EnergyTrail",
+						new Vector2(1f, 0.14f),
 						EaseFunction.EaseCircularOut,
 						false,
 						0.3f).WithSkew(0.6f, aimDirection.ToRotation() + MathHelper.Pi));

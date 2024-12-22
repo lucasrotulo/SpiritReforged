@@ -37,18 +37,18 @@ public class ClawCannon : ModItem
 
 			PulseCircle[] pulseCircles =
 			[
-				new PulseCircle(position + velocity, Cannonbubble.RINGCOLOR, Cannonbubble.RINGCOLOR * 0.5f, 0.5f, 80, 60, EaseFunction.EaseCircularOut),
-                new PulseCircle(position + velocity * 1.5f, Cannonbubble.RINGCOLOR, Cannonbubble.RINGCOLOR * 0.5f, 0.5f, 110, 60, EaseFunction.EaseCircularOut),
+				new TexturedPulseCircle(position + velocity, Cannonbubble.RINGCOLOR * 2, Cannonbubble.RINGCOLOR * 2, 1, 40, 25, "LiquidTrail", new Vector2(1, 0.5f), EaseFunction.EaseCircularOut, false, 0.6f),
+                new TexturedPulseCircle(position + velocity * 1.5f, Cannonbubble.RINGCOLOR * 2, Cannonbubble.RINGCOLOR * 2, 1, 60, 30, "LiquidTrail", new Vector2(1, 0.5f), EaseFunction.EaseCircularOut, false, 0.6f),
 			];
 
 			for(int i = 0; i < pulseCircles.Length; i++)
 			{
-				pulseCircles[i].Velocity = 0.5f * Vector2.Normalize(velocity) / (1 + 2*i);
-				ParticleHandler.SpawnParticle(pulseCircles[i].WithSkew(0.85f, velocity.ToRotation()).UsesLightColor());
+				pulseCircles[i].Velocity = 0.75f * Vector2.Normalize(velocity) / (1 + 3*i);
+				ParticleHandler.SpawnParticle(pulseCircles[i].WithSkew(0.7f, velocity.ToRotation()).UsesLightColor());
 			}
 
 			for (int i = 0; i < 4; ++i)
-				ParticleHandler.SpawnParticle(new BubbleParticle(position + velocity + player.velocity / 2, Vector2.Normalize(velocity).RotatedByRandom(MathHelper.Pi / 6) * Main.rand.NextFloat(2f, 4), Main.rand.NextFloat(0.2f, 0.4f), 40));
+				ParticleHandler.SpawnParticle(new BubbleParticle(position + velocity + player.velocity / 2, Vector2.Normalize(velocity).RotatedByRandom(MathHelper.Pi / 6) * Main.rand.NextFloat(2f, 4), Main.rand.NextFloat(0.4f, 0.7f), 40));
 		}
 
 		return true;

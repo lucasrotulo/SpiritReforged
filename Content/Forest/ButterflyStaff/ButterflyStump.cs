@@ -1,4 +1,5 @@
 using SpiritReforged.Common.TileCommon;
+using System.Linq;
 using Terraria.DataStructures;
 using Terraria.GameContent.Drawing;
 using Terraria.GameContent.ObjectInteractions;
@@ -46,6 +47,18 @@ public class ButterflyStump : ModTile
 	public override bool CanKillTile(int i, int j, ref bool blockDamaged) => !TopHalf(i, j) || HasItem(i, j);
 	public override bool CanDrop(int i, int j) => HasItem(i, j);
 
+	public override void KillMultiTile(int i, int j, int frameX, int frameY)
+	{
+		var system = ModContent.GetInstance<ButterflySystem>();
+		var thisZone = system.butterflyZones.Where(x => x.Contains(new Point(i, j))).FirstOrDefault();
+
+		if (thisZone != default)
+		{
+			system.butterflyZones.Remove(thisZone); //Remove the zone associated with this stump if it is destroyed
+			NetMessage.SendData(MessageID.WorldData); // and sync it
+		}
+	}
+
 	public override void MouseOver(int i, int j)
 	{
 		if (!HasItem(i, j))
@@ -73,6 +86,8 @@ public class ButterflyStump : ModTile
 			int item = Item.NewItem(null, new Vector2(i + 1, j) * 16, ItemType);
 			if (Main.netMode != NetmodeID.SinglePlayer)
 				NetMessage.SendData(MessageID.SyncItem, number: item);
+
+			NPC.NewNPCDirect(null, (i + 1) * 16, (j + 1) * 16, ModContent.NPCType<ButterflyCritter>()).netUpdate = true;
 
 			return true;
 		}

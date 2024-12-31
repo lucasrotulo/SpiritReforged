@@ -1,7 +1,6 @@
 ﻿using SpiritReforged.Common.Misc;
 using SpiritReforged.Content.Savanna.NPCs.Sparrow;
 using SpiritReforged.Content.Savanna.Tiles.Paintings;
-using System.Collections.Generic;
 using System.Linq;
 using Terraria.DataStructures;
 
@@ -43,22 +42,24 @@ public class SavannaGlobalNPC : GlobalNPC
 
 	public override void EditSpawnPool(IDictionary<int, float> pool, NPCSpawnInfo spawnInfo)
 	{
-		if (spawnInfo.Player.InModBiome<Biome.SavannaBiome>())
+		if (spawnInfo.Player.InModBiome<Biome.SavannaBiome>() && !spawnInfo.Invasion)
 		{
-			pool.Remove(0);
+			pool.Remove(0); //Remove all vanilla spawns
 
 			if (!Main.dayTime)
-				pool[NPCID.DoctorBones] = 0.005f;
+			{
+				pool[NPCID.DoctorBones] = .005f;
+				pool[NPCID.Zombie] = .28f;
+				pool[NPCID.DemonEye] = .17f;
+			}
+			else if (!spawnInfo.Player.GetModPlayer<DustStorm.DustStormPlayer>().ZoneDustStorm)
+			{
+				pool[NPCID.Bird] = .05f;
+				pool[ModContent.NPCType<Sparrow>()] = .1f;
+			}
 
 			float odds = spawnInfo.Player.GetModPlayer<DustStorm.DustStormPlayer>().ZoneDustStorm ? .22f : .1f;
 			pool[NPCID.Vulture] = odds;
-
-			float critterOdds = spawnInfo.Player.GetModPlayer<DustStorm.DustStormPlayer>().ZoneDustStorm ? 0f : .05f;
-			if (Main.dayTime)
-			{
-				pool[NPCID.Bird] = critterOdds;
-				pool[ModContent.NPCType<Sparrow>()] = critterOdds * 2;
-			}
 		}
 	}
 

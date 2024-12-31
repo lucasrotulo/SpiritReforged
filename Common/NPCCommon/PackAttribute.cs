@@ -37,11 +37,13 @@ internal class PackGlobalNPC : GlobalNPC
 			for (int a = 0; a < 20; a++) //20 intermediate attempts
 			{
 				var randomPos = npc.Center.ToTileCoordinates() + new Point((int)(spawnRange * Main.rand.NextFloat(-1f, 1f)), 0);
+				int originalY = randomPos.Y;
 				WorldMethods.FindGround(randomPos.X, ref randomPos.Y);
 
-				if (!WorldGen.PlayerLOS(randomPos.X, randomPos.Y)) //Don't spawn on screen
+				//Don't spawn on screen, with an elevation difference greater than 5 tiles, or on invalid tiles
+				if (!WorldGen.PlayerLOS(randomPos.X, randomPos.Y) && Math.Abs(originalY - randomPos.Y) <= 5 && !TileID.Sets.IsSkippedForNPCSpawningGroundTypeCheck[Main.tile[randomPos.X, randomPos.Y].TileType])
 				{
-					NPC.NewNPCDirect(new EntitySource_Parent(npc), randomPos.ToWorldCoordinates() - new Vector2(0, npc.height / 2 - 16), npc.type);
+					NPC.NewNPCDirect(new EntitySource_Parent(npc), randomPos.ToWorldCoordinates() - new Vector2(0, npc.height / 2), npc.type);
 					break;
 				}
 			}

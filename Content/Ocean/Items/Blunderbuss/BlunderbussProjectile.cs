@@ -19,6 +19,9 @@ internal class BlunderbussProjectile : GlobalProjectile
 		if (!firedFromBlunderbuss)
 			return true;
 
+		Main.instance.LoadProjectile(873); //Ensure these textures are loaded before drawing
+		Main.instance.LoadProjectile(686);
+
 		var defaultTexture = TextureAssets.Projectile[projectile.type].Value;
 		float time = MathHelper.Min((float)projectile.timeLeft / timeLeftMax, 1f);
 

@@ -15,13 +15,17 @@ public class QuenchPotion : ModItem
 		if (!self.cursed && !self.CCed && !self.dead && !self.HasBuff<QuenchPotion_Buff>() && self.CountBuffs() < Player.MaxBuffs)
 		{
 			int itemIndex = self.FindItemInInventoryOrOpenVoidBag(Type, out bool inVoidBag);
-			var item = inVoidBag ? self.bank4.item[itemIndex] : self.inventory[itemIndex];
 
-			ItemLoader.UseItem(item, self);
-			self.AddBuff(item.buffType, item.buffTime);
+			if (itemIndex > 0)
+			{
+				var item = inVoidBag ? self.bank4.item[itemIndex] : self.inventory[itemIndex];
 
-			if (item.consumable && ItemLoader.ConsumeItem(item, self) && --item.stack <= 0)
-				item.TurnToAir();
+				ItemLoader.UseItem(item, self);
+				self.AddBuff(item.buffType, item.buffTime);
+
+				if (item.consumable && ItemLoader.ConsumeItem(item, self) && --item.stack <= 0)
+					item.TurnToAir();
+			}
 		}
 
 		orig(self);

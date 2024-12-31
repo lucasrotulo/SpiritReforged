@@ -34,6 +34,20 @@ public abstract class CandleTile : FurnitureTile
 		DustType = -1;
 	}
 
+	public override bool RightClick(int i, int j)
+	{
+		HitWire(i, j);
+		return true;
+	}
+
+	public override void MouseOver(int i, int j)
+	{
+		Player Player = Main.LocalPlayer;
+		Player.noThrow = 2;
+		Player.cursorItemIconEnabled = true;
+		Player.cursorItemIconID = ModItem.Type;
+	}
+
 	public override void HitWire(int i, int j)
 	{
 		var tile = Framing.GetTileSafely(i, j);

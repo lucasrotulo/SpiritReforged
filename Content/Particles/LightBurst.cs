@@ -35,7 +35,7 @@ public class LightBurst : Particle
 		{
 			var rayScale = new Vector2(1f, 0.5f);
 			var origin = new Vector2(rayTexture.Width / 2, 0);
-			float rotation = (TimeActive / 40f) + (MathHelper.TwoPi * i / numRays);
+			float rotation = TimeActive / 40f + MathHelper.TwoPi * i / numRays;
 			if (i % 3 == 0) //Smaller inverse rotation rays
 			{
 				rayScale.Y *= 0.9f;

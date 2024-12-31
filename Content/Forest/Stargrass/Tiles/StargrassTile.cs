@@ -3,6 +3,7 @@ using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.Visuals.Glowmasks;
 using SpiritReforged.Common.WorldGeneration;
 using SpiritReforged.Content.Particles;
+using System.Linq;
 
 namespace SpiritReforged.Content.Forest.Stargrass.Tiles;
 
@@ -33,6 +34,9 @@ internal class StargrassTile : ModTile
 
 		AddMapEntry(new Color(28, 216, 151));
 		DustType = DustID.Flare_Blue;
+
+		var data = TileObjectData.GetTileData(TileID.Sunflower, 0);
+		data.AnchorValidTiles = data.AnchorValidTiles.Concat([Type]).ToArray(); //Allow sunflowers to be planted on this tile
 	}
 
 	public override void FloorVisuals(Player player)
@@ -72,6 +76,18 @@ internal class StargrassTile : ModTile
 	public override bool CanExplode(int i, int j)
 	{
 		WorldGen.KillTile(i, j, false, false, true); //Makes the tile completely go away instead of reverting to dirt
+		return true;
+	}
+
+	public override bool TileFrame(int i, int j, ref bool resetFrame, ref bool noBreak)
+	{
+		//Surrounded by solid tiles
+		if (WorldGen.SolidOrSlopedTile(i, j - 1) && WorldGen.SolidOrSlopedTile(i, j + 1) && WorldGen.SolidOrSlopedTile(i - 1, j) && WorldGen.SolidOrSlopedTile(i + 1, j))
+		{
+			Main.tile[i, j].TileType = TileID.Grass;
+			return false;
+		}
+
 		return true;
 	}
 

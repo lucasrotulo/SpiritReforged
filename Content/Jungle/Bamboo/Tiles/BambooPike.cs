@@ -15,7 +15,7 @@ public class BambooPike : ModTile
 
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style1x1);
 		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.AlternateTile, 1, 0);
-		TileObjectData.newTile.AnchorAlternateTiles = new int[] { Type };
+		TileObjectData.newTile.AnchorAlternateTiles = [Type];
 		TileObjectData.newTile.RandomStyleRange = 3;
 		TileObjectData.newTile.StyleHorizontal = true;
 		TileObjectData.addTile(Type);

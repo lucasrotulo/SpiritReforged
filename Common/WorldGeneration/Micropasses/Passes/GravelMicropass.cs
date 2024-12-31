@@ -18,19 +18,10 @@ internal class GravelMicropass : Micropass
 
 	public override void Run(GenerationProgress progress, GameConfiguration config)
 	{
-		static void MoveDown(int x, ref int y, int ignore = -1)
-		{
-			while (!Main.tile[x, y].HasTile || ignore != -1 && Main.tile[x, y].HasTile && Main.tile[x, y].TileType == ignore)
-				y++;
-		}
-
-		static void MoveUp(int x, ref int y)
-		{
-			while (WorldGen.SolidOrSlopedTile(Main.tile[x, y - 1]))
-				y--;
-		}
+		const int maxFails = 300;
 
 		progress.Message = Language.GetTextValue("Mods.SpiritReforged.Generation.Gravel");
+
 		int count = 0;
 		int maxCount = 8 + 2 * WorldGen.GetWorldSize(); //The maximum number of gravel patches which can generate in a world
 		int distance = WorldGen.oceanDistance;
@@ -38,7 +29,7 @@ internal class GravelMicropass : Micropass
 		int waterTopLeft = 0, waterTopRight = 0;
 		GetWaterTop(ref waterTopLeft, ref waterTopRight);
 
-		while (count < maxCount)
+		for (int f = 0; f < maxFails; f++)
 		{
 			int minY = waterTopLeft;
 
@@ -118,8 +109,22 @@ internal class GravelMicropass : Micropass
 						i--; //Try again
 				}
 
-				count++;
+				f--; //Decrease fails
+				if (++count >= maxCount)
+					break;
 			}
+		}
+
+		static void MoveDown(int x, ref int y, int ignore = -1)
+		{
+			while (!Main.tile[x, y].HasTile || ignore != -1 && Main.tile[x, y].HasTile && Main.tile[x, y].TileType == ignore)
+				y++;
+		}
+
+		static void MoveUp(int x, ref int y)
+		{
+			while (WorldGen.SolidOrSlopedTile(Main.tile[x, y - 1]))
+				y--;
 		}
 	}
 
@@ -157,6 +162,7 @@ internal class GravelMicropass : Micropass
 
 			WorldGen.KillTile(p.X, p.Y);
 			WorldGen.PlaceTile(p.X, p.Y, ModContent.TileType<Gravel>());
+
 			if (i >= size * (size - 1)) //Top layer slope logic
 			{
 				if (size == 2)

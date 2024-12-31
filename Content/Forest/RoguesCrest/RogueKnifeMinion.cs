@@ -6,7 +6,7 @@ namespace SpiritReforged.Content.Forest.RoguesCrest;
 
 public class RogueKnifeMinion() : BaseMinion(500, 900, new Vector2(12, 12))
 {
-	private bool Trailing => Projectile.velocity.Length() >= ProjectileID.Sets.TrailCacheLength[Projectile.type] && AiState == Attacking;
+	private bool Trailing => Projectile.velocity.Length() >= ProjectileID.Sets.TrailCacheLength[Type] && AiState == Attacking;
 
 	private bool animate = false;
 
@@ -24,8 +24,8 @@ public class RogueKnifeMinion() : BaseMinion(500, 900, new Vector2(12, 12))
 	public override void AbstractSetStaticDefaults()
 	{
 		Main.projFrames[Type] = 6;
-		ProjectileID.Sets.TrailCacheLength[Projectile.type] = 5;
-		ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
+		ProjectileID.Sets.TrailCacheLength[Type] = 5;
+		ProjectileID.Sets.TrailingMode[Type] = 0;
 	}
 
 	public override void AbstractSetDefaults()
@@ -106,7 +106,6 @@ public class RogueKnifeMinion() : BaseMinion(500, 900, new Vector2(12, 12))
 
 			if (AiTimer <= 0 && Projectile.Distance(target.Center) > 30) //Lunge, then go on cooldown
 			{
-
 				SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Projectile/SwordSlash1") with { Pitch = 1.25f }, Projectile.Center);
 
 				AiTimer = attackCooldown;

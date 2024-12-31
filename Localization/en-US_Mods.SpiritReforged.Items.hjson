@@ -501,6 +501,7 @@ PoolNoodle: {
 		'''
 		3 summon tag damage
 		{$CommonItemTooltip.Whips}
+		Struck enemies may release bubbly explosions when hit by summons
 		'''
 }
 
@@ -1086,3 +1087,52 @@ SafekeeperRing: {
 }
 
 PeevedTumblerBannerItem.DisplayName: Peeved Tumbler Banner
+
+LeatherHood: {
+	DisplayName: Marksman's Hood
+	Tooltip: Increases critical strike chance by 5%
+}
+
+LeatherLegs: {
+	DisplayName: Marksman's Boots
+	Tooltip: ""
+}
+
+LeatherPlate: {
+	DisplayName: Marksman's Plate
+	Tooltip: ""
+}
+
+ExplorerTreads: {
+	DisplayName: Explorer's Treads
+	Tooltip:
+		'''
+		+5% Movement speed for every 10% missing health
+		50% chance to avoid traps and hazards
+		'Makes exploring temples like a walk in the park'
+		'''
+}
+
+CactusStaff: {
+	DisplayName: Cactus Staff
+	Tooltip: Summons cactus walls to protect you
+}
+
+PearlString: {
+	DisplayName: Pearl String
+	Tooltip:
+		'''
+		Slain enemies drop more coins
+		'You feel lucky'
+		'''
+}
+
+DrywoodChandelierItem: {
+	DisplayName: Drywood Chandelier
+	Tooltip: ""
+}
+
+DriftwoodLanternItem: {
+	DisplayName: Driftwood Lantern
+	Tooltip: ""
+}

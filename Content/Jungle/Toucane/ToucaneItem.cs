@@ -6,9 +6,9 @@ public class ToucaneItem : ModItem
 {
 	public override void SetDefaults()
 	{
+		Item.width = 46;
+		Item.height = 54;
 		Item.damage = 20;
-		Item.width = 34;
-		Item.height = 32;
 		Item.value = Item.sellPrice(0, 2, 0, 0);
 		Item.rare = ItemRarityID.Green;
 		Item.mana = 12;

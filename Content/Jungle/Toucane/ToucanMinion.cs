@@ -13,10 +13,9 @@ public class ToucanMinion : BaseMinion
 
 	public override void AbstractSetStaticDefaults()
 	{
-		// DisplayName.SetDefault("Toucan");
-		Main.projFrames[Projectile.type] = 6;
-		ProjectileID.Sets.TrailCacheLength[Projectile.type] = 8;
-		ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
+		Main.projFrames[Type] = 8;
+		ProjectileID.Sets.TrailCacheLength[Type] = 8;
+		ProjectileID.Sets.TrailingMode[Type] = 2;
 	}
 
 	public override void AbstractSetDefaults() => Projectile.localNPCHitCooldown = 20;
@@ -25,23 +24,23 @@ public class ToucanMinion : BaseMinion
 	{
 		if (AiState == STATE_GLIDING)
 		{
-			Projectile.frame = 3;
+			Projectile.frame = 4;
 			return false;
 		}
 
 		if (AiState == STATE_RESTING)
 		{
-			Projectile.frame = 5;
+			Projectile.frame = 7;
 			return false;
 		}
 
 		if (_featherShotFrameTime > 0)
 		{
-			Projectile.frame = 4;
+			Projectile.frame = 6;
 			return false;
 		}
 
-		endframe = 3; //only animate through first 3 frames
+		endframe = 4; //only animate through first 3 frames
 		framespersecond = (int)MathHelper.Lerp(6, 14, Math.Min(Projectile.velocity.Length() / 6, 1));
 		return true;
 	}
@@ -88,7 +87,7 @@ public class ToucanMinion : BaseMinion
 	{
 		AiTimer++;
 		_featherShotFrameTime = 0;
-		if (AiState != STATE_HOVERTORESTSPOT && AiState != STATE_RESTING)
+		if (AiState is not STATE_HOVERTORESTSPOT and not STATE_RESTING)
 		{
 			AiTimer = 0;
 			AiState = STATE_HOVERTORESTSPOT;

@@ -236,8 +236,8 @@ internal class SavannaEcotone : EcotoneBase
 		if (SavannaArea.IsEmpty)
 			return;
 
-		const int chanceMax = 64, chanceMin = 20; //Maximum, minimum odds to generate a tree
-		const int minimumTreeSpace = 5;
+		const int chanceMax = 90; //Maximum odds to generate a tree
+		const int minimumTreeSpace = 7;
 
 		progress.Message = Language.GetTextValue("Mods.SpiritReforged.Generation.SavannaObjects");
 		HashSet<int> treeSpacing = [];
@@ -270,6 +270,9 @@ internal class SavannaEcotone : EcotoneBase
 					if (flags.HasFlag(OpenFlags.Above))
 						grassTop.Add(new Point16(i, j));
 				}
+
+				if (WorldGen.genRand.NextBool(120)) //Rare bones
+					WorldGen.PlaceTile(i - 1, j, TileID.LargePiles2, true, style: WorldGen.genRand.Next(52, 55));
 			}
 
 		if (WorldGen.genRand.NextBool(3))
@@ -292,7 +295,7 @@ internal class SavannaEcotone : EcotoneBase
 				}
 				else
 				{
-					treeOdds = Math.Max(treeOdds - 1, chanceMin); //Decrease the odds every time a tree fails to generate
+					treeOdds = Math.Max(treeOdds - 1, 2); //Decrease the odds every time a tree fails to generate
 				}
 			}
 		}

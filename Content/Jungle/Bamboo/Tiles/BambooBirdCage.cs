@@ -1,3 +1,4 @@
+using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Content.Jungle.Bamboo.Items;
 using System.IO;
 using System.Linq;
@@ -8,16 +9,16 @@ using Terraria.ModLoader.IO;
 
 namespace SpiritReforged.Content.Jungle.Bamboo.Tiles;
 
-public class BambooBirdCage : ModTile
+public class BambooBirdCage : ModTile, IAutoloadTileItem
 {
-	private static readonly int[] Birds = new int[] { ItemID.Cardinal, ItemID.BlueJay, ItemID.GoldBird, ItemID.Bird, ItemID.Seagull, ItemID.BlueMacaw, ItemID.GrayCockatiel };
+	private int ItemType => Mod.Find<ModItem>(Name + "Item").Type;
 
-	/// <returns>Whether the multitile at the given position has a tile entity</returns>
+	private static readonly int[] BirdTypes = [ItemID.Cardinal, ItemID.BlueJay, ItemID.GoldBird, ItemID.Bird, ItemID.Seagull, ItemID.BlueMacaw, ItemID.GrayCockatiel];
+
+	/// <returns> Whether the multitile at the given position has a tile entity. </returns>
 	private static bool HasEntity(int i, int j, out BambooBirdCageEntity entity)
 	{
-		//Select the top leftmost of the tile, because that's where our entity is
-		Tile tile = Framing.GetTileSafely(i, j);
-		(i, j) = (i - tile.TileFrameX % (18 * 2) / 18, j - tile.TileFrameY / 18);
+		TileExtensions.GetTopLeft(ref i, ref j);
 
 		if (TileEntity.ByPosition.TryGetValue(new Point16(i, j), out TileEntity value) && value is BambooBirdCageEntity)
 		{
@@ -28,6 +29,18 @@ public class BambooBirdCage : ModTile
 		entity = null;
 		return false;
 	}
+
+	public void SetItemDefaults(ModItem item)
+	{
+		item.Item.DefaultToPlaceableTile(ModContent.TileType<BambooBirdCage>());
+		item.Item.width = 20;
+		item.Item.height = 32;
+		item.Item.value = 50;
+	}
+
+	public void AddItemRecipes(ModItem item) => item.CreateRecipe()
+		.AddIngredient(ModContent.ItemType<StrippedBamboo>(), 14)
+		.AddTile(TileID.Sawmill).Register();
 
 	public override void SetStaticDefaults()
 	{
@@ -42,7 +55,7 @@ public class BambooBirdCage : ModTile
 		TileObjectData.newTile.Origin = new Point16(1, 2);
 		TileObjectData.newTile.Width = 2;
 		TileObjectData.newTile.Height = 3;
-		TileObjectData.newTile.CoordinateHeights = new int[] { 16, 16, 18 };
+		TileObjectData.newTile.CoordinateHeights = [16, 16, 18];
 		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.SolidTile | AnchorType.SolidSide, 2, 0);
 		ModTileEntity tileEntity = ModContent.GetInstance<BambooBirdCageEntity>();
 		TileObjectData.newTile.HookPostPlaceMyPlayer = new PlacementHook(tileEntity.Hook_AfterPlacement, -1, 0, false);
@@ -57,7 +70,7 @@ public class BambooBirdCage : ModTile
 		LocalizedText name = CreateMapEntryName();
 		AddMapEntry(new Color(100, 100, 60), name);
 		DustType = -1;
-		RegisterItemDrop(ModContent.ItemType<BambooBirdCageItem>());
+		RegisterItemDrop(ItemType);
 	}
 
 	public override void SetDrawPositions(int i, int j, ref int width, ref int offsetY, ref int height, ref short tileFrameX, ref short tileFrameY)
@@ -101,7 +114,7 @@ public class BambooBirdCage : ModTile
 		{
 			var player = Main.LocalPlayer;
 
-			if (Birds.Contains(player.HeldItem.type) && entity.item is null) //player has a bird in their hand and the cage is empty
+			if (BirdTypes.Contains(player.HeldItem.type) && entity.item is null) //player has a bird in their hand and the cage is empty
 			{
 				CageItem(ref entity.item, player);
 
@@ -112,7 +125,7 @@ public class BambooBirdCage : ModTile
 				player.QuickSpawnItem(new EntitySource_TileInteraction(player, i, j), entity.item);
 				entity.item = null;
 
-				if (Birds.Contains(player.HeldItem.type))
+				if (BirdTypes.Contains(player.HeldItem.type))
 					CageItem(ref entity.item, player);
 
 				return true;
@@ -129,7 +142,7 @@ public class BambooBirdCage : ModTile
 		if (HasEntity(i, j, out var entity) && entity.item != null)
 			player.cursorItemIconID = entity.item.type;
 		else
-			player.cursorItemIconID = ModContent.ItemType<BambooBirdCageItem>();
+			player.cursorItemIconID = ItemType;
 
 		player.noThrow = 2;
 		player.cursorItemIconEnabled = true;
@@ -200,23 +213,4 @@ public class BambooBirdCageEntity : ModTileEntity
 	}
 
 	public override void LoadData(TagCompound tag) => item = tag.Get<Item>(nameof(item));
-}
-
-public class BambooBirdCageItem : ModItem
-{
-	public override void SetDefaults()
-	{
-		Item.DefaultToPlaceableTile(ModContent.TileType<BambooBirdCage>());
-		Item.width = 20;
-		Item.height = 32;
-		Item.value = 50;
-	}
-
-	public override void AddRecipes()
-	{
-		Recipe recipe = CreateRecipe();
-		recipe.AddIngredient(ModContent.ItemType<StrippedBamboo>(), 14);
-		recipe.AddTile(TileID.Sawmill);
-		recipe.Register();
-	}
 }

@@ -3,6 +3,7 @@ using SpiritReforged.Common.NPCCommon;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.TileCommon.TileSway;
 using SpiritReforged.Content.Particles;
+using SpiritReforged.Content.Savanna.Items.Food;
 using SpiritReforged.Content.Vanilla.Items.Food;
 using System.Linq;
 using Terraria.Audio;
@@ -252,7 +253,6 @@ public class Ostrich : ModNPC
 		SoundEngine.PlaySound(SoundID.NPCHit11 with { PitchVariance = .5f, MaxInstances = 0, Pitch = -.25f }, NPC.Center);
 		SoundEngine.PlaySound(SoundID.Grass with { Volume = .45f, PitchVariance = .5f, MaxInstances = 0 }, NPC.Center);
 
-
 		for (int i = 0; i < (dead ? 30 : 4); i++)
 		{
 			Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.Blood, Scale: Main.rand.NextFloat(.8f, 2f))
@@ -318,7 +318,11 @@ public class Ostrich : ModNPC
 
 		return 0;
 	}
-	public override void ModifyNPCLoot(NPCLoot npcLoot) => npcLoot.AddCommon<RawMeat>(3);
+	public override void ModifyNPCLoot(NPCLoot npcLoot)
+	{
+		npcLoot.AddCommon<RawMeat>(3);
+		npcLoot.AddCommon<OstrichEgg>(9);
+	}
 }
 
 public class OstrichImpact(Entity entity, Vector2 basePosition, Vector2 velocity, float width, float length, float rotation, int maxTime, float taperExponent, int detatchTime = -1) : MotionNoiseCone(entity, basePosition, velocity, width, length, rotation, maxTime, detatchTime)

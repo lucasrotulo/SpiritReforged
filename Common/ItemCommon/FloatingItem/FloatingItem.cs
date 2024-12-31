@@ -30,6 +30,8 @@ public abstract class FloatingItem : ModItem
 		}
 	}
 
+	public override void GrabRange(Player player, ref int grabRange) => grabRange /= 3 * 2;
+
 	public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI)
 	{
 		Point tilePos = (Item.position + new Vector2(0, 8 - Item.velocity.Y)).ToTileCoordinates();

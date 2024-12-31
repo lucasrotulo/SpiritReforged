@@ -49,6 +49,7 @@ Projectiles: {
 	FrozenFragment.DisplayName: Frozen Fragment
 	FrostbiteHeldOut.DisplayName: Frostbite Held Out
 	RogueKnifeMinion.DisplayName: Rusted Knife
+	CactusWallProj.DisplayName: Cactus Wall
 }
 
 Configs: {
@@ -116,7 +117,7 @@ Buffs: {
 	}
 
 	JellyfishBuff: {
-		DisplayName: Jellyfish Buff
+		DisplayName: Friendly Jellyfish
 		Description: This energetic jellyfish loves following you around!
 	}
 
@@ -194,6 +195,11 @@ Buffs: {
 		DisplayName: Pool Noodle Bubble Buff
 		Description: You've found the secret Spirit Lore Codex... Stay tuned for our superboss Darksteel, the Fallen Star!
 	}
+
+	ExplorerSpeed: {
+		DisplayName: Explorer Speed
+		Description: Your speed is greatly improved
+	}
 }
 
 SetBonuses: {
@@ -213,6 +219,12 @@ SetBonuses: {
 		'''
 		You gain increased rewards from herbs of all kinds
 		You have a powerful eye for spotting herbs
+		'''
+	Marksman:
+		'''
+		Wearing Marksman's Armor builds up concentration
+		While concentrated, your next strike is a critical strike and deals more damage
+		Concentration is disrupted when hurt, but charges faster while standing still
 		'''
 }
 

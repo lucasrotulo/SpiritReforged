@@ -1,7 +1,7 @@
-﻿using SpiritReforged.Common.TileCommon;
+﻿using SpiritReforged.Common.Misc;
+using SpiritReforged.Common.TileCommon;
 using SpiritReforged.Common.TileCommon.PostDrawTreeHookSystem;
 using SpiritReforged.Common.TileCommon.TileSway;
-using SpiritReforged.Common.Visuals;
 using SpiritReforged.Common.WorldGeneration;
 using SpiritReforged.Content.Forest.Stargrass.Tiles;
 using Terraria.DataStructures;
@@ -54,7 +54,9 @@ internal class StargrassTreeGlowEffects : GlobalTile, IPostDrawTree
 	{
 		Tile tile = Main.tile[i, j];
 		var frame = new Rectangle(tile.TileFrameX, tile.TileFrameY, 16, 16);
-		Color color = Color.White * 0.8f * MathHelper.Lerp(0.2f, 1f, (float)((Math.Sin(NoiseSystem.Perlin(i * 1.2f, j * 0.2f) * 3f + Main.GlobalTimeWrappedHourly * 1.3f) + 1f) * 0.5f));
+
+		double lerp = Math.Sin(NoiseSystem.Perlin(i * 1.2f, j * 0.2f) * 5f + Main.GlobalTimeWrappedHourly) * .25f;
+		Color color = (Color.White * (.3f - (float)lerp)).Additive();
 
 		spriteBatch.Draw(_baseTexture.Value, TileExtensions.DrawPosition(i, j, TileExtensions.TileOffset), frame, color);
 
@@ -82,17 +84,18 @@ internal class StargrassTreeGlowEffects : GlobalTile, IPostDrawTree
 
 			var source = new Rectangle(treeFrame * (topTextureFrameWidth3 + 2), 0, topTextureFrameWidth3, topTextureFrameHeight3);
 			var origin = new Vector2(topTextureFrameWidth3 / 2, topTextureFrameHeight3);
+
 			Main.spriteBatch.Draw(treeTopTexture, drawPos, source, color, rotation * 0.08f, origin, 1f, SpriteEffects.None, 0f);
 		}
-		else if (tile.TileFrameX == 44)
+		else
 		{
 			int _ = 0;
 
-			if (!WorldGen.GetCommonTreeFoliageData(i, j, -1, ref _, ref _, out _, out int _, out int _))
+			if (!WorldGen.GetCommonTreeFoliageData(i, j, -1, ref treeFrame, ref _, out _, out int _, out int _))
 				return;
 
 			Texture2D treeBranchTexture = _branchTexture.Value;
-			Vector2 position = TileExtensions.DrawPosition(i, j, TileExtensions.TileOffset - new Vector2(8, 16));
+			var position = TileExtensions.DrawPosition(i, j, TileExtensions.TileOffset);
 			float rotation = 0f;
 
 			if (tile.WallType <= 0)
@@ -101,30 +104,26 @@ internal class StargrassTreeGlowEffects : GlobalTile, IPostDrawTree
 			if (rotation < 0f)
 				position.X += rotation;
 
-			position.X -= Math.Abs(rotation) * 2f;
-			var source = new Rectangle(42, treeFrame * 42, 40, 40);
-			Main.spriteBatch.Draw(treeBranchTexture, position, source, color, rotation * 0.06f, new Vector2(0f, 30f), 1f, SpriteEffects.None, 0f);
-		}
-		else if (tile.TileFrameX == 66)
-		{
-			int _ = 0;
+			if (tile.TileFrameX == 44)
+			{
+				position.X += Math.Abs(rotation) * 2f;
+				position += new Vector2(16f, 12f);
 
-			if (!WorldGen.GetCommonTreeFoliageData(i, j, -1, ref _, ref _, out _, out int _, out int _))
-				return;
+				var origin = new Vector2(40f, 24f);
+				var source = new Rectangle(0, treeFrame * 42, 40, 40);
 
-			Texture2D treeBranchTexture = _branchTexture.Value;
-			Vector2 position = TileExtensions.DrawPosition(i, j, TileExtensions.TileOffset - new Vector2(8, 16));
-			float rotation = 0f;
+				Main.spriteBatch.Draw(treeBranchTexture, position, source, color, rotation * 0.06f, origin, 1f, SpriteEffects.None, 0f);
+			}
+			else if (tile.TileFrameX == 66)
+			{
+				position.X -= Math.Abs(rotation) * 2f;
+				position += new Vector2(0, 18);
 
-			if (tile.WallType <= 0)
-				rotation = Main.instance.TilesRenderer.GetWindCycle(i, j, TileSwaySystem.Instance.TreeWindCounter);
+				var origin = new Vector2(0f, 30f);
+				var source = new Rectangle(42, treeFrame * 42, 40, 40);
 
-			if (rotation < 0f)
-				position.X += rotation;
-
-			position.X -= Math.Abs(rotation) * 2f;
-			var source = new Rectangle(42, treeFrame * 42, 40, 40);
-			Main.spriteBatch.Draw(treeBranchTexture, position, source, color, rotation * 0.06f, new Vector2(0f, 30f), 1f, SpriteEffects.None, 0f);
+				Main.spriteBatch.Draw(treeBranchTexture, position, source, color, rotation * 0.06f, origin, 1f, SpriteEffects.None, 0f);
+			}
 		}
 	}
 
@@ -133,14 +132,10 @@ internal class StargrassTreeGlowEffects : GlobalTile, IPostDrawTree
 		if (type == TileID.Trees)
 		{
 			while (Main.tile[i, j].TileType == TileID.Trees)
-			{
 				j++;
-			}
 
 			if (Main.tile[i, j].TileType == ModContent.TileType<StargrassTile>())
-			{
 				return true;
-			}
 		}
 
 		return false;

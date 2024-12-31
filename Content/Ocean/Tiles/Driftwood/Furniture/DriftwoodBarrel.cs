@@ -10,6 +10,12 @@ public class DriftwoodBarrel : ChestTile
 		.AddTile(TileID.Sawmill)
 		.Register();
 
+	public override void StaticDefaults()
+	{
+		base.StaticDefaults();
+		DustType = DustID.BorealWood;
+	}
+
 	public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
 	{
 		var tile = Framing.GetTileSafely(i, j);

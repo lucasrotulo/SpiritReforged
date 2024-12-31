@@ -11,13 +11,6 @@ public class BaobabPod : ModTile, ISwayInWind
 	private static readonly Dictionary<Point16, float> hitData = []; //Stores the modified rotation of the tile at these coordinates
 
 	private const int numStages = 3;
-	private static void GetTopLeft(ref int i, ref int j) //Gets the top left tile in this multitile
-	{
-		var tile = Framing.GetTileSafely(i, j);
-		var data = TileObjectData.GetTileData(tile);
-
-		(i, j) = (i - tile.TileFrameX % data.CoordinateFullWidth / 18, j - tile.TileFrameY % data.CoordinateFullHeight / 18);
-	}
 
 	public override void SetStaticDefaults()
 	{
@@ -68,7 +61,7 @@ public class BaobabPod : ModTile, ISwayInWind
 			return;
 
 		fail = true;
-		GetTopLeft(ref i, ref j);
+		TileExtensions.GetTopLeft(ref i, ref j);
 
 		//Add hitData
 		float random = Main.rand.NextFloat(-1f, 1f) * .5f;
@@ -128,7 +121,7 @@ public class BaobabPod : ModTile, ISwayInWind
 			return false;
 		}
 
-		GetTopLeft(ref i, ref j);
+		TileExtensions.GetTopLeft(ref i, ref j);
 
 		for (int frameX = 0; frameX < data.Width; frameX++)
 			for (int frameY = 0; frameY < data.Width; frameY++)
@@ -163,7 +156,7 @@ public class BaobabPod : ModTile, ISwayInWind
 	{
 		static float GetRotation(int i, int j)
 		{
-			GetTopLeft(ref i, ref j);
+			TileExtensions.GetTopLeft(ref i, ref j);
 
 			var key = new Point16(i, j);
 			if (hitData.TryGetValue(key, out float rotation))
@@ -184,13 +177,12 @@ public class BaobabPod : ModTile, ISwayInWind
 		if (tile.TileFrameY > 0)
 			DrawGrassOverlay(i, j, spriteBatch, offset, rotation, origin);
 
-		#region update hitdata
-		GetTopLeft(ref i, ref j);
+		//Update hitData
+		TileExtensions.GetTopLeft(ref i, ref j);
 
 		var key = new Point16(i, j);
 		if (hitData.TryGetValue(key, out float hitRot))
 			hitData[key] = MathHelper.Lerp(hitRot, 0, .1f);
-		#endregion
 	}
 
 	private void DrawGrassOverlay(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)

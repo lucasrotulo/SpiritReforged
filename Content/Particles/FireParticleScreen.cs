@@ -24,25 +24,8 @@ public class FireParticleScreen : ScreenParticle
 	public override void CustomDraw(SpriteBatch spriteBatch)
 	{
 		Texture2D bloom = AssetLoader.LoadedTextures["Bloom"];
+
 		spriteBatch.Draw(bloom, GetDrawPosition(), null, Color * 0.6f, 0, bloom.Size() / 2, Scale * Main.GameViewMatrix.Zoom / 5f, SpriteEffects.None, 0);
 		spriteBatch.Draw(Texture, GetDrawPosition(), null, Color, Velocity.ToRotation(), Texture.Size() / 2, Scale * Main.GameViewMatrix.Zoom * .75f, SpriteEffects.None, 0);
-	}
-
-	public static void Spawn()
-	{
-		var startPos = Main.screenPosition + new Vector2(Main.rand.Next(Main.screenWidth), 0);
-		if (!Collision.WetCollision(startPos, 2, 2))
-			return;
-
-		var p = new FireParticleScreen();
-		p.Position = startPos;
-		p.OriginalScreenPosition = Main.screenPosition;
-		p.Velocity = new Vector2(0, Main.rand.NextFloat(1.5f, 4));
-		p.Rotation = Main.rand.NextFloat(MathHelper.PiOver4);
-		p.Scale = Main.rand.NextFloat(0.05f, 0.065f);
-		p.ParallaxStrength = (float)Math.Pow(p.Scale, 3);
-		p.MaxTime = 360;
-
-		ParticleHandler.SpawnParticle(p);
 	}
 }

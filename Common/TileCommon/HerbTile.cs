@@ -1,9 +1,11 @@
-﻿using SpiritReforged.Content.Forest.Botanist.Items;
+﻿using SpiritReforged.Common.TileCommon.CheckItemUse;
+using SpiritReforged.Content.Forest.Botanist.Items;
+using System.Linq;
 using Terraria.GameContent.Metadata;
 
 namespace SpiritReforged.Common.TileCommon;
 
-public abstract class HerbTile : ModTile
+public abstract class HerbTile : ModTile, ICheckItemUse
 {
 	public enum PlantStage : byte
 	{
@@ -35,6 +37,27 @@ public abstract class HerbTile : ModTile
 	public virtual void StaticDefaults() { }
 
 	public virtual bool CanBeHarvested(int i, int j) => Main.tile[i, j].HasTile && GetStage(i, j) == PlantStage.Grown;
+
+	public bool? CheckItemUse(int type, int i, int j)
+	{
+		if (type == ItemID.StaffofRegrowth)
+		{
+			int herbType = TagGlobalTile.HarvestableHerbs.FirstOrDefault(x => x == Main.tile[i, j].TileType);
+
+			if (herbType != default)
+			{
+				var herb = ModContent.GetModTile(type) as HerbTile;
+
+				if (herb.CanBeHarvested(i, j))
+				{
+					WorldGen.KillTile(i, j);
+					return true;
+				}
+			}
+		}
+
+		return null;
+	}
 
 	public override bool CanPlace(int i, int j)
 	{

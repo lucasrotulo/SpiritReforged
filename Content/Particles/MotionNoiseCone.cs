@@ -1,5 +1,4 @@
-﻿using SpiritReforged.Common.Easing;
-using SpiritReforged.Common.Particle;
+﻿using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.PrimitiveRendering;
 using SpiritReforged.Common.PrimitiveRendering.PrimitiveShape;
 

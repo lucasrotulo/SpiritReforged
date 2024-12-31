@@ -7,7 +7,6 @@ namespace SpiritReforged.Content.Particles;
 
 public class PulseCircle : Particle
 {
-
 	/// <summary>
 	/// The rotation along the 2D plane of the particle, defaults to 0
 	/// </summary>

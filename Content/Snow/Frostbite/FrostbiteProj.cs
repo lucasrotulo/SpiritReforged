@@ -2,11 +2,16 @@ using SpiritReforged.Common.Particle;
 using SpiritReforged.Content.Particles;
 using Terraria.Audio;
 using SpiritReforged.Common.Easing;
+using Microsoft.Xna.Framework.Audio;
+using ReLogic.Utilities;
+using Microsoft.Xna.Framework.Input;
 
 namespace SpiritReforged.Content.Snow.Frostbite;
 
 public class FrostbiteProj : ModProjectile
 {
+	SlotId loopedSound = SlotId.Invalid;
+
 	private bool Released 
 	{ 
 		get => Projectile.ai[0] == 1; 
@@ -31,6 +36,8 @@ public class FrostbiteProj : ModProjectile
 
 	public override void AI()
 	{
+		UpdateSound();
+
 		Player owner = Main.player[Projectile.owner];
 		int fadeInTime = 60;
 		int fadeOutTime = 60;
@@ -63,6 +70,8 @@ public class FrostbiteProj : ModProjectile
 		}
 		else
 		{
+			loopedSound = SlotId.Invalid;
+
 			Projectile.velocity *= .95f;
 
 			Projectile.alpha = Math.Min(Projectile.alpha + 255 / fadeOutTime, 255);
@@ -131,5 +140,27 @@ public class FrostbiteProj : ModProjectile
 		Main.EntitySpriteDraw(cursor, Projectile.Center + Projectile.velocity - Main.screenPosition, null, color, 0, cursor.Size() / 2, scale, SpriteEffects.None, 0);
 
 		return false;
+	}
+
+	private void UpdateSound()
+	{
+		Player owner = Main.player[Projectile.owner];
+		if (owner.channel && !Released)
+		{
+			if (!SoundEngine.TryGetActiveSound(loopedSound, out ActiveSound sound) || sound is null)
+				loopedSound = SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Ambient/Blizzard_Loop") with { Pitch = -.6f, Volume = .6f, MaxInstances = 1, IsLooped = true }, Projectile.Center);
+			
+			else
+				sound.Position = Projectile.Center;
+		}
+		else if (SoundEngine.TryGetActiveSound(loopedSound, out ActiveSound sound) && sound is not null)
+		{
+			sound.Volume = MathHelper.Lerp(sound.Volume, 0, Projectile.localAI[0] / 10);
+			if (sound.Volume <= 0.001f)
+			{
+				sound.Stop();
+				loopedSound = SlotId.Invalid;
+			}
+		}
 	}
 }

@@ -17,7 +17,7 @@ public class BaobabFruitTile : ModTile, ISwayInWind
 
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style1x2);
 		TileObjectData.newTile.Origin = new(0, 0);
-		TileObjectData.newTile.AnchorBottom = new AnchorData(AnchorType.None, 1, 0);
+		TileObjectData.newTile.AnchorBottom = AnchorData.Empty;
 		TileObjectData.newTile.AnchorTop = new AnchorData(AnchorType.SolidTile, 1, 0);
 		TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<Tiles.LivingBaobabLeaf>()];
 		TileObjectData.newTile.StyleHorizontal = true;
@@ -45,6 +45,6 @@ public class BaobabFruitTile : ModTile, ISwayInWind
 		var source = new Rectangle((tile.TileFrameY == 0) ? 18 : tile.TileFrameX, tile.TileFrameY, 16, 16);
 		var effects = (i / 18 % 2 == 0) ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
-		spriteBatch.Draw(TextureAssets.Tile[Type].Value, drawPos + offset, source, Lighting.GetColor(i, j), rotation, origin, 1, effects, 0f);
+		spriteBatch.Draw(TextureAssets.Tile[Type].Value, drawPos + offset - new Vector2(0, 2), source, Lighting.GetColor(i, j), rotation, origin, 1, effects, 0f);
 	}
 }

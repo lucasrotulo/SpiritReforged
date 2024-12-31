@@ -1,14 +1,9 @@
 ﻿using SpiritReforged.Common.Easing;
-using SpiritReforged.Common.Particle;
-using SpiritReforged.Common.PrimitiveRendering.PrimitiveShape;
-using SpiritReforged.Common.PrimitiveRendering;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria.Map;
+
 namespace SpiritReforged.Content.Particles;
 public class SmokeCloud : DissipatingImage
 {
 	private readonly EaseFunction _acceleration;
-
 	private readonly Vector2 _initialVel;
 
 	public SmokeCloud(Vector2 position, Vector2 velocity, Color color, float scale, EaseFunction acceleration, int maxTime, bool useLightColor = true) : base(position, color, Main.rand.NextFloatDirection(), scale, 0.6f, "Smoke", maxTime)

@@ -166,7 +166,7 @@ public class PeevedTumbler : ModNPC
 	{
 		bool zoneDustStorm = spawnInfo.Player.GetModPlayer<DustStorm.DustStormPlayer>().ZoneDustStorm;
 		if (spawnInfo.Player.InModBiome<Biome.SavannaBiome>() && !spawnInfo.PlayerInTown && zoneDustStorm && !spawnInfo.Water)
-			return .09f;
+			return .12f;
 
 		return 0;
 	}

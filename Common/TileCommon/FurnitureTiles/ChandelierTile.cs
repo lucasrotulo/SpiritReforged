@@ -5,8 +5,16 @@ using Terraria.DataStructures;
 namespace SpiritReforged.Common.TileCommon.FurnitureTiles;
 
 [AutoloadGlowmask("255,165,0", false)]
+[DrawOrder(DrawOrderAttribute.Layer.NonSolid)]
 public abstract class ChandelierTile : FurnitureTile, ISwayInWind
 {
+	public virtual bool BlurGlowmask => true;
+
+	/// <summary>
+	/// Offsets the anchor and how wide it needs to be. Defaults to (1, 1), meaning the anchor only needs 1 tile in the middle of the 3 tile wide chandelier.
+	/// </summary>
+	public virtual (int width, int count) AnchorDataOffsets => (1, 1);
+
 	public override void StaticDefaults()
 	{
 		Main.tileFrameImportant[Type] = true;
@@ -15,7 +23,7 @@ public abstract class ChandelierTile : FurnitureTile, ISwayInWind
 		Main.tileLavaDeath[Type] = true;
 
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style3x3);
-		TileObjectData.newTile.AnchorTop = new AnchorData(AnchorType.SolidTile, 3, 0);
+		TileObjectData.newTile.AnchorTop = new AnchorData(AnchorType.SolidTile, AnchorDataOffsets.width, AnchorDataOffsets.count);
 		TileObjectData.newTile.AnchorBottom = AnchorData.Empty;
 		TileObjectData.newTile.Origin = new Point16(1, 0);
 		TileObjectData.addTile(Type);
@@ -53,8 +61,6 @@ public abstract class ChandelierTile : FurnitureTile, ISwayInWind
 			(r, g, b) = (color.R / 255f, color.G / 255f, color.B / 255f);
 	}
 
-	public virtual bool BlurGlowmask => true;
-
 	public void DrawInWind(int i, int j, SpriteBatch spriteBatch, Vector2 offset, float rotation, Vector2 origin)
 	{
 		var tile = Framing.GetTileSafely(i, j);
@@ -69,6 +75,7 @@ public abstract class ChandelierTile : FurnitureTile, ISwayInWind
 			Lighting.GetColor(i, j), rotation, origin, 1, SpriteEffects.None, 0);
 
 		var glowTexture = GlowmaskTile.TileIdToGlowmask[Type].Glowmask.Value;
+
 		if (BlurGlowmask)
 		{
 			ulong randSeed = Main.TileFrameSeed ^ (ulong)((long)j << 32 | (uint)i);

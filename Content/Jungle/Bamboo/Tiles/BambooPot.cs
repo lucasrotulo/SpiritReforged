@@ -12,14 +12,14 @@ public class BambooPot : ModTile
 		Main.tileLavaDeath[Type] = true;
 		TileObjectData.newTile.CopyFrom(TileObjectData.Style1x1);
 		TileObjectData.newTile.Height = 1;
-		TileObjectData.newTile.CoordinateHeights = new int[] { 18 };
+		TileObjectData.newTile.CoordinateHeights = [18];
 		TileObjectData.addTile(Type);
 
 		LocalizedText name = CreateMapEntryName();
 		AddMapEntry(new Color(100, 100, 60), name);
 
 		DustType = DustID.PalmWood;
-		AdjTiles = new int[] { TileID.ClayPot };
+		AdjTiles = [TileID.ClayPot];
 	}
 
 	public override void PlaceInWorld(int i, int j, Item item)

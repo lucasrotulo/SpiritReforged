@@ -18,7 +18,7 @@ public class HydrothermalVentPlume : ModProjectile
 
 	public override void AI()
 	{
-		if (Projectile.timeLeft % 20 == 0)
+		if (Projectile.timeLeft % 20 == 0) //Spawn slag pickups
 		{
 			SoundEngine.PlaySound(SoundID.Drown with { Pitch = -.5f, PitchVariance = .25f, Volume = 1.5f }, Projectile.Center);
 
@@ -26,11 +26,8 @@ public class HydrothermalVentPlume : ModProjectile
 				Item.NewItem(Projectile.GetSource_FromAI(), Projectile.Center, ModContent.ItemType<MineralSlagPickup>());
 		}
 
-		if (Main.dedServ || !new Rectangle((int)Main.screenPosition.X, (int)Main.screenPosition.Y, Main.screenWidth, Main.screenHeight).Contains(Projectile.Center.ToPoint()))
-			return; //Don't create vfx for the local player if the projectile isn't on screen
-
-		if (Main.rand.NextBool(10)) //Foreground embers
-			FireParticleScreen.Spawn();
+		if (Main.rand.NextBool(10))
+			ForegroundEmber();
 
 		if (Main.rand.NextBool(12)) //Small embers
 			ParticleHandler.SpawnParticle(new GlowParticle(Projectile.Center + new Vector2(Main.rand.NextFloat(-1f, 1f) * 4, 0),
@@ -57,7 +54,25 @@ public class HydrothermalVentPlume : ModProjectile
 		dust2.fadeIn = 1.5f;
 	}
 
-	public override bool ShouldUpdatePosition() => false;
+	private void ForegroundEmber()
+	{
+		var startPos = new Vector2(Projectile.Center.X - Main.screenWidth / 2 + Main.rand.Next(Main.screenWidth), Main.screenPosition.Y);
 
+		if (!Collision.WetCollision(startPos, 2, 2))
+			return;
+
+		var p = new FireParticleScreen();
+		p.Position = startPos;
+		p.OriginalScreenPosition = Main.screenPosition;
+		p.Velocity = new Vector2(0, Main.rand.NextFloat(.75f, 2));
+		p.Rotation = Main.rand.NextFloat(MathHelper.PiOver4);
+		p.Scale = Main.rand.NextFloat(0.25f, 0.35f);
+		p.ParallaxStrength = (float)Math.Pow(p.Scale, 3);
+		p.MaxTime = 360;
+
+		ParticleHandler.SpawnParticle(p);
+	}
+
+	public override bool ShouldUpdatePosition() => false;
 	public override bool PreDraw(ref Color lightColor) => false;
 }

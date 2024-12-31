@@ -18,9 +18,9 @@ internal class LivingBaobabLeaf : ModTile
 
 	public override void RandomUpdate(int i, int j)
 	{
-		if (Main.rand.NextBool(50)) //Randomly grow hanging baobab fruit
+		if (Main.rand.NextBool(25)) //Randomly grow hanging baobab fruit
 		{
-			WorldGen.PlaceObject(i, j + 1, ModContent.TileType<Items.BaobabFruit.BaobabFruitTile>(), true);
+			WorldGen.PlaceObject(i, j + 1, ModContent.TileType<Items.BaobabFruit.BaobabFruitTile>(), true, Main.rand.Next(2));
 
 			if (Main.netMode != NetmodeID.SinglePlayer)
 				NetMessage.SendTileSquare(-1, i, j + 1, 1, 2);

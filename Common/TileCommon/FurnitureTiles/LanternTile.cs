@@ -7,6 +7,8 @@ namespace SpiritReforged.Common.TileCommon.FurnitureTiles;
 [AutoloadGlowmask("255,165,0", false)]
 public abstract class LanternTile : FurnitureTile
 {
+	public virtual bool BlurGlowmask => true;
+
 	public override void SetItemDefaults(ModItem item) => item.Item.value = Item.sellPrice(copper: 30);
 
 	public override void AddItemRecipes(ModItem item)
@@ -65,8 +67,6 @@ public abstract class LanternTile : FurnitureTile
 		if (tile.TileFrameX < 18 && tile.TileFrameY == 18)
 			(r, g, b) = (color.R / 255f, color.G / 255f, color.B / 255f);
 	}
-
-	public virtual bool BlurGlowmask => true;
 
 	public override void PostDraw(int i, int j, SpriteBatch spriteBatch)
 	{

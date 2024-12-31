@@ -13,6 +13,7 @@ sampler textureSampler = sampler_state
     AddressV = wrap;
 };
 float2 textureStretch;
+float texExponent;
 float scroll;
 
 struct VertexShaderInput
@@ -114,7 +115,7 @@ float4 TexturedRing(VertexShaderOutput input) : COLOR0
     yCoord -= 0.5f;
     yCoord *= textureStretch.y / RingWidth;
     yCoord += 0.5f;
-    float texColor = tex2D(textureSampler, float2(xCoord * textureStretch.x, yCoord)).r * strength;
+    float texColor = pow(tex2D(textureSampler, float2(xCoord * textureStretch.x, yCoord)).r, texExponent) * strength;
     if (texColor == 0)
         return float4(0, 0, 0, 0);
     

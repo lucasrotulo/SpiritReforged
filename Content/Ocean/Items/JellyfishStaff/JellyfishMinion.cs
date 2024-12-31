@@ -220,11 +220,13 @@ public class JellyfishMinion : BaseMinion
 						1f,
 						50,
 						20,
-						"EnergyTrail",
+						"Lightning",
 						new Vector2(1f, 0.14f),
 						EaseFunction.EaseCircularOut,
 						false,
 						0.3f).WithSkew(0.6f, aimDirection.ToRotation() + MathHelper.Pi));
+
+					ParticleHandler.SpawnParticle(new DissipatingImage(Projectile.Center + aimDirection * 10, Color.White.Additive(), Main.rand.NextFloat(MathHelper.TwoPi), 0.05f, Main.rand.NextFloat(-0.5f, 0.5f), "ElectricScorch", new(0.2f, 0.2f), new(3, 1.5f), 15));
 
 					var bolt = Projectile.NewProjectileDirect(Projectile.GetSource_FromAI(), Projectile.Center, aimDirection * JellyfishBolt.HITSCAN_STEP, ModContent.ProjectileType<JellyfishBolt>(), Projectile.damage, Projectile.knockBack, Projectile.owner, IsPink ? 1 : 0, 0, 3);
 					bolt.netUpdate = true;

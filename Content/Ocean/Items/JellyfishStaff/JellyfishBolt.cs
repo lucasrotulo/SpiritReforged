@@ -114,7 +114,7 @@ public class JellyfishBolt : ModProjectile
 				80 + Main.rand.NextFloat(20),
 				25 + Main.rand.Next(10),
 				"EnergyTrail",
-				new Vector2(1f, 0.14f),
+				new Vector2(1, 0.14f),
 				EaseFunction.EaseCircularOut,
 				false,
 				0.5f).WithSkew(Main.rand.NextFloat(0.2f, 0.7f), Main.rand.NextFloat(MathHelper.PiOver2) + i * MathHelper.PiOver2));

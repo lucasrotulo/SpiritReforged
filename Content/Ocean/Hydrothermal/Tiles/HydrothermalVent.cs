@@ -1,4 +1,5 @@
 ﻿using SpiritReforged.Common.Easing;
+using SpiritReforged.Common.Misc;
 using SpiritReforged.Common.Particle;
 using SpiritReforged.Common.PlayerCommon;
 using SpiritReforged.Common.TileCommon;
@@ -54,11 +55,9 @@ public class HydrothermalVent : ModTile
 			SoundEngine.PlaySound(new SoundStyle("SpiritReforged/Assets/SFX/Tile/StoneCrack" + Main.rand.Next(1, 3)) { PitchVariance = .6f }, position);
 			SoundEngine.PlaySound(SoundID.Drown with { Pitch = -.5f, PitchVariance = .25f, Volume = 1.5f }, position);
 
-			ParticleHandler.SpawnParticle(new TexturedPulseCircle(position, Color.Orange, 0.75f, 200, 20, "supPerlin",
-				new Vector2(4, 0.75f), EaseFunction.EaseCubicOut).WithSkew(0.75f, MathHelper.Pi - MathHelper.PiOver2));
-
-			ParticleHandler.SpawnParticle(new TexturedPulseCircle(position, Color.White, 0.5f, 200, 20, "supPerlin",
-				new Vector2(4, 0.75f), EaseFunction.EaseCubicOut).WithSkew(0.75f, MathHelper.Pi - MathHelper.PiOver2));
+			for(int k = 0; k < 4; k++)
+				ParticleHandler.SpawnParticle(new TexturedPulseCircle(position, Color.LightYellow.Additive(), Color.Orange.Additive(), 0.8f, 150 + Main.rand.Next(50), 25 + Main.rand.Next(10), "noise",
+					new Vector2(2, 0.6f), EaseFunction.EaseCubicOut, false, 0.5f).WithSkew(0.8f, -MathHelper.PiOver2 + Main.rand.NextFloat(-0.1f, 0.1f)));
 
 			for (int x = 0; x < 5; x++) //Large initial smoke plume
 			{
@@ -159,6 +158,7 @@ public class HydrothermalVent : ModTile
 		if (IsValid(i, j) && !cooldowns.ContainsKey(pt))
 			cooldowns.Add(pt, cooldownMax); //Initialize cooldown counters on the server/singleplayer
 
+		Erupt(i, j);
 		if (cooldowns[pt] == 0 && WorldGen.PlayerLOS(i, j))
 		{
 			Erupt(i, j);

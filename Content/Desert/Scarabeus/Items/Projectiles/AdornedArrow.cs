@@ -45,7 +45,7 @@ public class AdornedArrow : ModProjectile, ITrailProjectile
 		if(Projectile.timeLeft < 50)
 			Projectile.alpha = (int)Min(Projectile.alpha + 6, 255);
 
-		if (rand.NextBool(3) && rand.NextFloat() < EaseCubicIn.Ease(Projectile.timeLeft / 150f))
+		if (rand.NextFloat() < EaseQuadOut.Ease(Projectile.timeLeft / 150f))
 		{
 			Vector2 particleCenter = Projectile.Center;
 			Vector2 particleVel = Vector2.Normalize(Projectile.velocity) * rand.NextFloat(2);

@@ -21,7 +21,7 @@ public class LightningParticle : Particle
 		MaxTime = maxTime;
 		Scale = scale;
 
-		float distortBase = Main.rand.NextFloat(-1.5f, 1.5f);
+		float distortBase = Main.rand.NextFloat(0.25f, 1.5f) * (Main.rand.NextBool() ? 1 : -1);
 		_distortion = new Vector2(distortBase, -distortBase);
 	}
 

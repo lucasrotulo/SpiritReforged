@@ -37,8 +37,8 @@ public class ClawCannon : ModItem
 
 			PulseCircle[] pulseCircles =
 			[
-				new TexturedPulseCircle(position + velocity, Cannonbubble.RINGCOLOR * 2, Cannonbubble.RINGCOLOR * 2, 1, 40, 25, "LiquidTrail", new Vector2(1, 0.5f), EaseFunction.EaseCircularOut, false, 0.6f),
-                new TexturedPulseCircle(position + velocity * 1.5f, Cannonbubble.RINGCOLOR * 2, Cannonbubble.RINGCOLOR * 2, 1, 60, 30, "LiquidTrail", new Vector2(1, 0.5f), EaseFunction.EaseCircularOut, false, 0.6f),
+				new TexturedPulseCircle(position + velocity, Cannonbubble.RINGCOLOR * 2, Cannonbubble.RINGCOLOR * 2, 1, 40, 25, "LiquidTrail", new Vector2(1, 0.5f), EaseFunction.EaseCircularOut, false, 0.6f, 0.25f),
+                new TexturedPulseCircle(position + velocity * 1.5f, Cannonbubble.RINGCOLOR * 2, Cannonbubble.RINGCOLOR * 2, 1, 60, 30, "LiquidTrail", new Vector2(1, 0.5f), EaseFunction.EaseCircularOut, false, 0.6f, 0.25f),
 			];
 
 			for(int i = 0; i < pulseCircles.Length; i++)
